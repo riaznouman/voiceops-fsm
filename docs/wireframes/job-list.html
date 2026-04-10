@@ -186,6 +186,21 @@
             margin-top: 12px;
             text-align: center;
         }
+
+        a.job-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        a.job-link .job-card {
+            cursor: pointer;
+        }
+
+        a.job-link:hover .job-card {
+            border-color: #999;
+            background: #fafafa;
+        }
     </style>
 </head>
 <body>
@@ -213,6 +228,7 @@
 
         <div class="search-bar">Search by job ID, customer, or address...</div>
 
+        <a href="job-detail.html" class="job-link">
         <div class="job-card">
             <div class="left">
                 <div class="job-ref">WO-1042</div>
@@ -226,7 +242,9 @@
                 <div class="priority">Priority: Normal</div>
             </div>
         </div>
+        </a>
 
+        <a href="job-detail.html" class="job-link">
         <div class="job-card">
             <div class="left">
                 <div class="job-ref">WO-1043</div>
@@ -240,7 +258,9 @@
                 <div class="priority">Priority: High</div>
             </div>
         </div>
+        </a>
 
+        <a href="job-detail.html" class="job-link">
         <div class="job-card">
             <div class="left">
                 <div class="job-ref">WO-1044</div>
@@ -254,7 +274,9 @@
                 <div class="priority">Priority: Normal</div>
             </div>
         </div>
+        </a>
 
+        <a href="job-detail.html" class="job-link">
         <div class="job-card">
             <div class="left">
                 <div class="job-ref">WO-1040</div>
@@ -268,7 +290,9 @@
                 <div class="priority">Priority: Normal</div>
             </div>
         </div>
+        </a>
 
+        <a href="job-detail.html" class="job-link">
         <div class="job-card">
             <div class="left">
                 <div class="job-ref">WO-1041</div>
@@ -282,6 +306,7 @@
                 <div class="priority">Priority: Low</div>
             </div>
         </div>
+        </a>
 
         <div class="note-box">
             [Wireframe] — Job List — VoiceOps FSM

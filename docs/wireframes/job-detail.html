@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceOps - Job Detail (Wireframe)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .header {
+            background: #555;
+            color: white;
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .header .user-info {
+            font-size: 13px;
+            color: #ccc;
+        }
+
+        .nav {
+            background: #666;
+            padding: 8px 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav a {
+            color: #ddd;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 4px 0;
+        }
+
+        .breadcrumb {
+            max-width: 900px;
+            margin: 12px auto 0;
+            padding: 0 16px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .breadcrumb a {
+            color: #888;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 12px auto 20px;
+            padding: 0 16px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .page-title {
+            font-size: 20px;
+            color: #444;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            border: 1px solid #999;
+            color: #555;
+            background: #ddd;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+
+        .card h2 {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .field-row {
+            display: flex;
+            padding: 5px 0;
+            font-size: 13px;
+        }
+
+        .field-label {
+            width: 140px;
+            color: #888;
+            flex-shrink: 0;
+        }
+
+        .field-value {
+            color: #444;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            background: white;
+            font-size: 12px;
+            color: #555;
+            cursor: pointer;
+        }
+
+        .btn.primary {
+            background: #555;
+            color: white;
+            border-color: #555;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #ccc;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 14px;
+            font-size: 12px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -17px;
+            top: 4px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #aaa;
+            border: 1px solid #999;
+        }
+
+        .timeline-item .time {
+            color: #888;
+        }
+
+        .timeline-item .event {
+            color: #555;
+            margin-top: 2px;
+        }
+
+        .notes-area {
+            width: 100%;
+            min-height: 60px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 13px;
+            color: #999;
+            background: #fafafa;
+            resize: vertical;
+        }
+
+        .note-box {
+            background: #f9f9f9;
+            border: 1px dashed #ccc;
+            padding: 10px;
+            font-size: 11px;
+            color: #999;
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>VoiceOps</h1>
+        <span class="user-info">Technician: John Smith</span>
+    </div>
+
+    <div class="nav">
+        <a href="technician-dashboard.html">Dashboard</a>
+        <a href="job-list.html">My Jobs</a>
+    </div>
+
+    <div class="breadcrumb">
+        <a href="job-list.html">My Jobs</a> &gt; WO-1042
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">WO-1042</h1>
+            <span class="status-badge">In Progress</span>
+        </div>
+
+        <div class="actions">
+            <button class="btn primary">Update Status</button>
+            <button class="btn">Get Directions</button>
+            <button class="btn">Call Customer</button>
+        </div>
+
+        <div class="two-col">
+            <div class="card">
+                <h2>Work Order Details</h2>
+                <div class="field-row">
+                    <span class="field-label">Reference</span>
+                    <span class="field-value">WO-1042</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-label">Type</span>
+                    <span class="field-value">On-site Repair</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-label">Priority</span>
+                    <span class="field-value">Normal</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-label">Status</span>
+                    <span class="field-value">In Progress</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-label">Issue</span>
+                    <span class="field-value">Device not powering on, possible battery issue</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Customer Info</h2>
+                <div class="field-row">
+                    <span class="field-label">Name</span>
+                    <span class="field-value">Sarah Johnson</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-label">Phone</span>
+                    <span class="field-value">0412 345 678</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-label">Email</span>
+                    <span class="field-value">sarah.j@example.com</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-label">Address</span>
+                    <span class="field-value">14 George St, Brisbane QLD 4000</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Schedule & Timing</h2>
+            <div class="two-col">
+                <div>
+                    <div class="field-row">
+                        <span class="field-label">Scheduled</span>
+                        <span class="field-value">10:00 AM - 11:30 AM</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">En Route At</span>
+                        <span class="field-value">9:45 AM</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="field-row">
+                        <span class="field-label">Arrived At</span>
+                        <span class="field-value">10:02 AM</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">Started At</span>
+                        <span class="field-value">10:05 AM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Device Information</h2>
+            <div class="field-row">
+                <span class="field-label">Brand</span>
+                <span class="field-value">Samsung</span>
+            </div>
+            <div class="field-row">
+                <span class="field-label">Model</span>
+                <span class="field-value">Galaxy S24</span>
+            </div>
+            <div class="field-row">
+                <span class="field-label">Serial Number</span>
+                <span class="field-value">SN-88421-XR</span>
+            </div>
+            <div class="field-row">
+                <span class="field-label">Condition</span>
+                <span class="field-value">Minor scratches on back panel</span>
+            </div>
+            <div class="field-row">
+                <span class="field-label">Reported Issue</span>
+                <span class="field-value">Device not powering on after overnight charge</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Timeline</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="time">10:05 AM</div>
+                    <div class="event">Status changed to In Progress</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="time">10:02 AM</div>
+                    <div class="event">Arrived at location</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="time">9:45 AM</div>
+                    <div class="event">En route to customer</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="time">9:00 AM</div>
+                    <div class="event">Work order assigned</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Notes</h2>
+            <textarea class="notes-area" placeholder="Add technician notes here...">Customer mentioned device was dropped in water last week. Checking for water damage indicators.</textarea>
+        </div>
+
+        <div class="note-box">
+            [Wireframe] — Job Detail — VoiceOps FSM
+        </div>
+    </div>
+</body>
+</html>

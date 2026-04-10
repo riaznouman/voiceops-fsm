@@ -83,3 +83,4 @@ Using a 4px base unit:
 - These are initial tokens and will be refined as we build out components
 - Mobile-first approach — wireframes are designed for phone-sized screens first
 - Accessibility: ensure minimum 4.5:1 contrast ratio for text
+- Wireframes are intentionally low-fidelity and grayscale. The color palette and typography defined above will be applied during the implementation phase.

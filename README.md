@@ -4,7 +4,7 @@ AI-Powered Voice Receptionist and Integrated Field Service Management System
 
 ## Project Overview
 
-VoiceOps is a capstone project for COIT20273 (Software Design and Development Project) at CQUniversity Australia. The system combines an AI-powered voice receptionist with a field service management platform to automate inbound call handling, job scheduling, technician dispatching, and work order management.
+VoiceOps is a capstone project for COIT20273 (Software Design and Development Project) at CQUniversity Australia. The system combines an AI-powered voice receptionist with a field service management platform to automate inbound call handling, job scheduling, technician dispatching, and work order management!
 
 ## Tech Stack
 

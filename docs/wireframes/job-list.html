@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceOps - Job List (Wireframe)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .header {
+            background: #555;
+            color: white;
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .header .user-info {
+            font-size: 13px;
+            color: #ccc;
+        }
+
+        .nav {
+            background: #666;
+            padding: 8px 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav a {
+            color: #ddd;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 4px 0;
+        }
+
+        .nav a.active {
+            color: white;
+            border-bottom: 2px solid white;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 16px;
+        }
+
+        .page-title {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: #444;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 6px 14px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .filter-btn.active {
+            background: #555;
+            color: white;
+            border-color: #555;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            background: white;
+            color: #999;
+        }
+
+        .job-card {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .job-card .left {
+            flex: 1;
+        }
+
+        .job-card .right {
+            text-align: right;
+            min-width: 100px;
+        }
+
+        .job-ref {
+            font-weight: bold;
+            font-size: 14px;
+            color: #444;
+        }
+
+        .job-type {
+            font-size: 11px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .job-customer {
+            font-size: 12px;
+            color: #666;
+            margin-top: 6px;
+        }
+
+        .job-address {
+            font-size: 12px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .job-time {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            border: 1px solid #aaa;
+            color: #666;
+            background: #eee;
+            margin-top: 6px;
+        }
+
+        .status-badge.in-progress {
+            border-color: #999;
+            background: #ddd;
+        }
+
+        .status-badge.en-route {
+            border-color: #999;
+            background: #d9d9d9;
+        }
+
+        .priority {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .note-box {
+            background: #f9f9f9;
+            border: 1px dashed #ccc;
+            padding: 10px;
+            font-size: 11px;
+            color: #999;
+            margin-top: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>VoiceOps</h1>
+        <span class="user-info">Technician: John Smith</span>
+    </div>
+
+    <div class="nav">
+        <a href="technician-dashboard.html">Dashboard</a>
+        <a href="job-list.html" class="active">My Jobs</a>
+    </div>
+
+    <div class="container">
+        <h1 class="page-title">My Jobs</h1>
+
+        <div class="filters">
+            <span class="filter-btn active">All</span>
+            <span class="filter-btn">Today</span>
+            <span class="filter-btn">This Week</span>
+            <span class="filter-btn">Assigned</span>
+            <span class="filter-btn">In Progress</span>
+            <span class="filter-btn">Completed</span>
+        </div>
+
+        <div class="search-bar">Search by job ID, customer, or address...</div>
+
+        <div class="job-card">
+            <div class="left">
+                <div class="job-ref">WO-1042</div>
+                <div class="job-type">On-site Repair</div>
+                <div class="job-customer">Customer: Sarah Johnson</div>
+                <div class="job-address">14 George St, Brisbane QLD 4000</div>
+            </div>
+            <div class="right">
+                <div class="job-time">10:00 AM</div>
+                <div class="status-badge in-progress">In Progress</div>
+                <div class="priority">Priority: Normal</div>
+            </div>
+        </div>
+
+        <div class="job-card">
+            <div class="left">
+                <div class="job-ref">WO-1043</div>
+                <div class="job-type">Pickup</div>
+                <div class="job-customer">Customer: Mike Chen</div>
+                <div class="job-address">8 Roma St, Brisbane QLD 4000</div>
+            </div>
+            <div class="right">
+                <div class="job-time">1:00 PM</div>
+                <div class="status-badge">Assigned</div>
+                <div class="priority">Priority: High</div>
+            </div>
+        </div>
+
+        <div class="job-card">
+            <div class="left">
+                <div class="job-ref">WO-1044</div>
+                <div class="job-type">On-site Repair</div>
+                <div class="job-customer">Customer: Emma Wilson</div>
+                <div class="job-address">22 Ann St, Brisbane QLD 4000</div>
+            </div>
+            <div class="right">
+                <div class="job-time">3:30 PM</div>
+                <div class="status-badge">Assigned</div>
+                <div class="priority">Priority: Normal</div>
+            </div>
+        </div>
+
+        <div class="job-card">
+            <div class="left">
+                <div class="job-ref">WO-1040</div>
+                <div class="job-type">Delivery</div>
+                <div class="job-customer">Customer: Tom Richards</div>
+                <div class="job-address">5 Queen St, Brisbane QLD 4000</div>
+            </div>
+            <div class="right">
+                <div class="job-time">8:30 AM</div>
+                <div class="status-badge">Completed</div>
+                <div class="priority">Priority: Normal</div>
+            </div>
+        </div>
+
+        <div class="job-card">
+            <div class="left">
+                <div class="job-ref">WO-1041</div>
+                <div class="job-type">In-house Repair</div>
+                <div class="job-customer">Customer: Lisa Park</div>
+                <div class="job-address">Workshop — VoiceOps HQ</div>
+            </div>
+            <div class="right">
+                <div class="job-time">9:15 AM</div>
+                <div class="status-badge">Completed</div>
+                <div class="priority">Priority: Low</div>
+            </div>
+        </div>
+
+        <div class="note-box">
+            [Wireframe] — Job List — VoiceOps FSM
+        </div>
+    </div>
+</body>
+</html>

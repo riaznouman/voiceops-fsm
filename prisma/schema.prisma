@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  TECHNICIAN
+  CUSTOMER
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+}
+
+enum WorkOrderStatus {
+  PENDING
+  EN_ROUTE
+  ON_SITE
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum WorkOrderPriority {
+  NORMAL
+  HIGH
+  URGENT
+}
+
+model User {
+  id            String     @id @default(cuid())
+  name          String
+  email         String     @unique
+  password      String
+  phone         String?
+  role          UserRole   @default(CUSTOMER)
+  status        UserStatus @default(ACTIVE)
+  hourlyRate    Float?
+  bio           String?
+  address       String?
+  profilePhoto  String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  // work orders as customer
+  customerWorkOrders   WorkOrder[] @relation("CustomerWorkOrders")
+  // work orders as technician
+  technicianWorkOrders WorkOrder[] @relation("TechnicianWorkOrders")
+
+  @@map("users")
+}
+
+model Service {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  description     String?
+  durationMinutes Int?
+  basePrice       Float?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  workOrders WorkOrder[]
+
+  @@map("services")
+}
+
+model WorkOrder {
+  id               String            @id @default(cuid())
+  referenceNumber  String            @unique
+  customerId       String
+  technicianId     String?
+  serviceId        String?
+  status           WorkOrderStatus   @default(PENDING)
+  priority         WorkOrderPriority @default(NORMAL)
+  scheduledAt      DateTime?
+  address          String?
+  issueDescription String?
+  resolutionNotes  String?
+  cancelledAt      DateTime?
+  cancelledReason  String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  customer   User     @relation("CustomerWorkOrders", fields: [customerId], references: [id])
+  technician User?    @relation("TechnicianWorkOrders", fields: [technicianId], references: [id])
+  service    Service? @relation(fields: [serviceId], references: [id])
+
+  @@map("work_orders")
+}

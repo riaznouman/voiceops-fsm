@@ -18,12 +18,14 @@ Rachel manages a team of 8 field technicians. She handles scheduling, dispatchin
 - Monitor job progress without calling technicians
 - Generate reports on completed jobs, response times, and technician performance
 - Manage customer records and service history
+- Have an automated voice receptionist handle incoming customer calls so she can focus on dispatching and managing technicians instead of answering the phone
 
 ## Frustrations
 - Not knowing if a technician is running late until the customer calls
 - Manually tracking job status on whiteboards or spreadsheets
 - Double-booking technicians because the schedule isn't updated in real time
 - Spending too much time on the phone coordinating instead of managing
+- Missing customer calls when she's busy dispatching technicians or already on another call
 
 ## Device & Context
 - Uses a desktop computer (Windows) with a large monitor

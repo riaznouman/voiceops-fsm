@@ -1,4 +1,6 @@
+import { PAGE_NAVIGATOR } from "@/utls/navigator";
 import Link from "next/link";
+
 
 export default function Home() {
   return (
@@ -8,7 +10,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
           <h1 className="text-xl font-bold text-gray-900">VoiceOps</h1>
           <Link
-            href="/login"
+            href={PAGE_NAVIGATOR.LOGIN}
             className="bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700"
           >
             Sign In

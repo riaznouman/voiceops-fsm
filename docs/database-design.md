@@ -13,6 +13,7 @@ Fields: id, name, email, password, phone, role, status, hourlyRate, bio, address
 
 ### Services
 Services that the business offers to customers.
+Technitian address the issue to provide the service either on on site or by pickup
 
 Fields: id, name, slug, description, durationMinutes, basePrice, isActive
 

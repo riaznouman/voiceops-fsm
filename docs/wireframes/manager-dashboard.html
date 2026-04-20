@@ -63,11 +63,59 @@
 
         .page-title {
             font-size: 20px;
-            margin-bottom: 16px;
+            margin-bottom: 4px;
             color: #444;
         }
 
-        .stats-row {
+        .page-sub {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 20px;
+        }
+
+        /* Role-view label banner */
+        .role-banner {
+            background: #e8e8e8;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 11px;
+            color: #777;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        /* Permission annotation */
+        .perm-label {
+            font-size: 10px;
+            color: #aaa;
+            font-style: italic;
+            margin-bottom: 6px;
+        }
+
+        .section-heading {
+            font-size: 15px;
+            color: #555;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        /* Stats grid */
+        .stats-row-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stats-row-5 {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stats-row-4-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
@@ -79,6 +127,23 @@
             border: 1px solid #ccc;
             border-radius: 6px;
             padding: 16px;
+            text-align: center;
+        }
+
+        /* Icon placeholder square */
+        .icon-placeholder {
+            width: 28px;
+            height: 28px;
+            background: #e8e8e8;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            color: #999;
+            line-height: 1.1;
             text-align: center;
         }
 
@@ -94,6 +159,13 @@
             margin-top: 4px;
         }
 
+        .stat-card .desc {
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 2px;
+        }
+
+        /* Section card */
         .section {
             background: white;
             border: 1px solid #ccc;
@@ -102,135 +174,110 @@
             margin-bottom: 16px;
         }
 
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .section h2 {
+            font-size: 15px;
+            color: #555;
             margin-bottom: 12px;
             padding-bottom: 8px;
             border-bottom: 1px solid #eee;
         }
 
-        .section-header h2 {
-            font-size: 15px;
-            color: #555;
+        /* Quick action cards */
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
 
-        .quick-actions {
-            display: flex;
-            gap: 8px;
+        .action-card {
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 16px;
         }
 
-        .btn {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            text-decoration: none;
-            border: 1px solid #aaa;
-            background: #eee;
-            color: #555;
-        }
-
-        .btn-primary {
-            background: #555;
-            color: white;
-            border-color: #555;
-        }
-
-        /* Technician status list */
-        .tech-list-item {
+        .action-card .action-icon-row {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
+            gap: 8px;
+            margin-bottom: 8px;
         }
 
-        .tech-list-item:last-child {
-            border-bottom: none;
+        .action-icon-box {
+            width: 28px;
+            height: 28px;
+            background: #e8e8e8;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            color: #999;
         }
 
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            border: 1px solid #999;
-            background: #ddd;
-            flex-shrink: 0;
-        }
-
-        .status-dot.active {
-            background: #888;
-            border-color: #666;
-        }
-
-        .status-dot.idle {
-            background: #ccc;
-            border-color: #aaa;
-        }
-
-        .tech-name {
-            font-size: 13px;
+        .action-card .action-title {
+            font-size: 14px;
             font-weight: bold;
-            color: #444;
-            min-width: 120px;
-        }
-
-        .tech-job {
-            font-size: 12px;
-            color: #888;
-            flex: 1;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 11px;
-            border: 1px solid #aaa;
-            color: #666;
-            background: #eee;
-        }
-
-        .status-badge.in-progress {
-            border-color: #999;
-            background: #ddd;
-        }
-
-        /* Work orders table */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-        }
-
-        thead th {
-            text-align: left;
-            padding: 6px 8px;
-            color: #888;
-            border-bottom: 1px solid #ddd;
-            font-weight: normal;
-        }
-
-        tbody td {
-            padding: 8px 8px;
-            border-bottom: 1px solid #eee;
             color: #555;
         }
 
-        tbody tr:last-child td {
-            border-bottom: none;
+        .action-card .action-desc {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
         }
 
-        tbody tr:hover td {
-            background: #f9f9f9;
+        .action-link {
+            font-size: 12px;
+            color: #666;
+            text-decoration: underline;
         }
 
-        .wo-id {
+        /* Recent activity placeholder */
+        .placeholder-box {
+            border: 1px dashed #ccc;
+            border-radius: 6px;
+            padding: 30px;
+            text-align: center;
+            background: #fafafa;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .placeholder-box .ph-icon {
+            width: 32px;
+            height: 32px;
+            background: #e8e8e8;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            color: #999;
+        }
+
+        .placeholder-box .ph-title {
+            font-size: 13px;
+            color: #aaa;
             font-weight: bold;
-            color: #444;
+        }
+
+        .placeholder-box .ph-sub {
+            font-size: 11px;
+            color: #bbb;
+        }
+
+        /* Divider between role sections */
+        .role-divider {
+            border: none;
+            border-top: 2px dashed #ddd;
+            margin: 24px 0;
         }
 
         .note-box {
@@ -247,7 +294,7 @@
 <body>
     <div class="header">
         <h1>VoiceOps</h1>
-        <span class="user-info">Manager: Sarah Johnson</span>
+        <span class="user-info">Admin: Sarah Johnson</span>
     </div>
 
     <div class="nav">
@@ -258,138 +305,148 @@
     </div>
 
     <div class="container">
-        <h1 class="page-title">Manager Dashboard</h1>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-sub">Welcome back! Here's an overview of your application.</p>
 
-        <!-- Top Stats Row -->
-        <div class="stats-row">
+        <!-- ═══════════════════════════════════════════════
+             TECHNICIAN VIEW — canViewOwnStats + stats.my_jobs
+             ═══════════════════════════════════════════════ -->
+        <div class="role-banner">Technician view — My Jobs (visible when canViewOwnStats = true)</div>
+
+        <div class="section-heading">My Jobs Overview</div>
+
+        <div class="stats-row-4">
             <div class="stat-card">
-                <div class="number">12</div>
-                <div class="label">Active Jobs</div>
+                <div class="icon-placeholder">Brief&shy;case</div>
+                <div class="number">18</div>
+                <div class="label">Total Jobs</div>
             </div>
             <div class="stat-card">
-                <div class="number">8</div>
+                <div class="icon-placeholder">Calen&shy;dar</div>
+                <div class="number">5</div>
                 <div class="label">Today's Jobs</div>
             </div>
             <div class="stat-card">
-                <div class="number">5</div>
-                <div class="label">Technicians on Duty</div>
+                <div class="icon-placeholder">Clock</div>
+                <div class="number">2</div>
+                <div class="label">In Progress</div>
             </div>
             <div class="stat-card">
+                <div class="icon-placeholder">Check&shy;Circle</div>
+                <div class="number">3</div>
+                <div class="label">Completed Today</div>
+            </div>
+        </div>
+
+        <hr class="role-divider">
+
+        <!-- ═══════════════════════════════════════════════
+             MANAGER / ADMIN VIEW — canViewAllStats + stats.workOrders
+             ═══════════════════════════════════════════════ -->
+        <div class="role-banner">Manager / Admin view — Work Orders (visible when canViewAllStats = true)</div>
+
+        <div class="section-heading">Work Orders Overview</div>
+
+        <div class="stats-row-5">
+            <div class="stat-card">
+                <div class="icon-placeholder">Calen&shy;dar</div>
+                <div class="number">84</div>
+                <div class="label">Total Work Orders</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon-placeholder">Calen&shy;dar</div>
+                <div class="number">12</div>
+                <div class="label">Today's Work Orders</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon-placeholder">Clock</div>
                 <div class="number">3</div>
                 <div class="label">Pending Dispatch</div>
             </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="section">
-            <div class="section-header">
-                <h2>Quick Actions</h2>
+            <div class="stat-card">
+                <div class="icon-placeholder">Brief&shy;case</div>
+                <div class="number">7</div>
+                <div class="label">In Progress</div>
             </div>
-            <div class="quick-actions">
-                <a href="create-work-order.html" class="btn btn-primary">+ Create Work Order</a>
-                <a href="#" class="btn">Assign Technician</a>
-            </div>
-        </div>
-
-        <!-- Technician Status List -->
-        <div class="section">
-            <div class="section-header">
-                <h2>Technician Status</h2>
-            </div>
-
-            <div class="tech-list-item">
-                <div class="status-dot active"></div>
-                <div class="tech-name">John Smith</div>
-                <div class="tech-job">WO-1042 — On-site repair, 14 George St</div>
-                <span class="status-badge in-progress">In Progress</span>
-            </div>
-            <div class="tech-list-item">
-                <div class="status-dot active"></div>
-                <div class="tech-name">Maria Torres</div>
-                <div class="tech-job">WO-1039 — Pickup, 8 Roma St</div>
-                <span class="status-badge in-progress">En Route</span>
-            </div>
-            <div class="tech-list-item">
-                <div class="status-dot active"></div>
-                <div class="tech-name">David Lee</div>
-                <div class="tech-job">WO-1045 — In-house repair, Workshop</div>
-                <span class="status-badge">Assigned</span>
-            </div>
-            <div class="tech-list-item">
-                <div class="status-dot idle"></div>
-                <div class="tech-name">Priya Nair</div>
-                <div class="tech-job">No active job</div>
-                <span class="status-badge">Idle</span>
-            </div>
-            <div class="tech-list-item">
-                <div class="status-dot idle"></div>
-                <div class="tech-name">Tom Nguyen</div>
-                <div class="tech-job">No active job</div>
-                <span class="status-badge">Idle</span>
+            <div class="stat-card">
+                <div class="icon-placeholder">Check&shy;Circle</div>
+                <div class="number">5</div>
+                <div class="label">Completed Today</div>
             </div>
         </div>
 
-        <!-- Recent Work Orders Table -->
-        <div class="section">
-            <div class="section-header">
-                <h2>Recent Work Orders</h2>
-                <a href="#" class="btn">View All</a>
-            </div>
+        <hr class="role-divider">
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Customer</th>
-                        <th>Service</th>
-                        <th>Status</th>
-                        <th>Technician</th>
-                        <th>Time</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="wo-id">WO-1045</td>
-                        <td>Ben Carter</td>
-                        <td>In-house Repair</td>
-                        <td><span class="status-badge">Assigned</span></td>
-                        <td>David Lee</td>
-                        <td>11:30 AM</td>
-                    </tr>
-                    <tr>
-                        <td class="wo-id">WO-1044</td>
-                        <td>Lisa Wang</td>
-                        <td>On-site Repair</td>
-                        <td><span class="status-badge in-progress">In Progress</span></td>
-                        <td>John Smith</td>
-                        <td>10:00 AM</td>
-                    </tr>
-                    <tr>
-                        <td class="wo-id">WO-1043</td>
-                        <td>Omar Hassan</td>
-                        <td>Pickup</td>
-                        <td><span class="status-badge">Completed</span></td>
-                        <td>Maria Torres</td>
-                        <td>9:15 AM</td>
-                    </tr>
-                    <tr>
-                        <td class="wo-id">WO-1042</td>
-                        <td>Sarah Kim</td>
-                        <td>Delivery</td>
-                        <td><span class="status-badge">Completed</span></td>
-                        <td>Tom Nguyen</td>
-                        <td>8:45 AM</td>
-                    </tr>
-                    <tr>
-                        <td class="wo-id">WO-1041</td>
-                        <td>James Patel</td>
-                        <td>On-site Repair</td>
-                        <td><span class="status-badge">Completed</span></td>
-                        <td>Priya Nair</td>
-                        <td>8:00 AM</td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- ═══════════════════════════════════════════════
+             SYSTEM STATS — permission gated
+             ═══════════════════════════════════════════════ -->
+        <div class="section-heading">System Stats</div>
+
+        <div class="stats-row-4-grid">
+            <div class="stat-card">
+                <div class="perm-label">[permission: system.users.read]</div>
+                <div class="icon-placeholder">Users</div>
+                <div class="number">42</div>
+                <div class="label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="perm-label">[permission: system.users.read]</div>
+                <div class="icon-placeholder">User&shy;Check</div>
+                <div class="number">38</div>
+                <div class="label">Active Users</div>
+                <div class="desc">90% verified</div>
+            </div>
+            <div class="stat-card">
+                <div class="perm-label">[permission: system.users.read]</div>
+                <div class="icon-placeholder">Trend&shy;ingUp</div>
+                <div class="number">2</div>
+                <div class="label">New Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="perm-label">[permission: system.roles.read]</div>
+                <div class="icon-placeholder">Shield</div>
+                <div class="number">5</div>
+                <div class="label">Total Roles</div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════
+             QUICK ACTIONS — 2-col grid, permission gated
+             ═══════════════════════════════════════════════ -->
+        <div class="section">
+            <h2>Quick Actions</h2>
+            <div class="quick-actions-grid">
+                <div class="action-card">
+                    <div class="perm-label">[permission: system.users.read]</div>
+                    <div class="action-icon-row">
+                        <div class="action-icon-box">Users</div>
+                        <div class="action-title">User Management</div>
+                    </div>
+                    <div class="action-desc">Manage users, permissions, and access controls for your application.</div>
+                    <span class="action-link">View all users →</span>
+                </div>
+                <div class="action-card">
+                    <div class="perm-label">[permission: system.roles.read]</div>
+                    <div class="action-icon-row">
+                        <div class="action-icon-box">Shield</div>
+                        <div class="action-title">Role Management</div>
+                    </div>
+                    <div class="action-desc">Configure roles and permissions to control access across your system.</div>
+                    <span class="action-link">Manage roles →</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════
+             RECENT ACTIVITY — permission gated placeholder
+             ═══════════════════════════════════════════════ -->
+        <div class="section">
+            <h2>Recent Activity <span style="font-size:11px;font-weight:normal;color:#aaa;">[permission: system.users.read]</span></h2>
+            <div class="placeholder-box">
+                <div class="ph-icon">Award</div>
+                <div class="ph-title">Activity Feed Coming Soon</div>
+                <div class="ph-sub">Track user registrations, role changes, and system events.</div>
+            </div>
         </div>
 
         <div class="note-box">

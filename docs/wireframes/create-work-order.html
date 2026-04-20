@@ -63,33 +63,40 @@
 
         .page-title {
             font-size: 20px;
-            margin-bottom: 16px;
+            margin-bottom: 4px;
             color: #444;
         }
 
-        .form-layout {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 16px;
-            align-items: start;
+        .page-sub {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 20px;
         }
 
-        .section {
+        /* Sheet panel — mirrors the SlideOver sheet width from the reference */
+        .sheet-panel {
             background: white;
             border: 1px solid #ccc;
             border-radius: 6px;
-            padding: 16px;
-            margin-bottom: 16px;
+            padding: 20px;
+            max-width: 480px;
+            margin-bottom: 32px;
         }
 
-        .section h2 {
-            font-size: 15px;
-            color: #555;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #eee;
+        .sheet-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 4px;
         }
 
+        .sheet-desc {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 20px;
+        }
+
+        /* Form groups */
         .form-group {
             margin-bottom: 14px;
         }
@@ -97,15 +104,16 @@
         .form-group label {
             display: block;
             font-size: 12px;
-            color: #666;
+            color: #555;
             margin-bottom: 4px;
+            font-weight: bold;
         }
 
-        .form-group select,
         .form-group input,
+        .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 8px 10px;
+            padding: 7px 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 13px;
@@ -114,100 +122,64 @@
         }
 
         .form-group textarea {
-            height: 70px;
             resize: vertical;
         }
 
-        .form-row {
+        /* Async searchable input */
+        .async-note {
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 3px;
+            font-style: italic;
+        }
+
+        /* Inline error */
+        .field-error {
+            font-size: 11px;
+            color: #888;
+            margin-top: 3px;
+            border-left: 2px solid #bbb;
+            padding-left: 6px;
+            font-style: italic;
+        }
+
+        /* 2-col grid for side-by-side fields */
+        .form-row-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
         }
 
-        .priority-group {
-            display: flex;
-            gap: 8px;
-        }
-
-        .priority-option {
-            flex: 1;
-            text-align: center;
-            padding: 7px 4px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 12px;
-            color: #666;
-            cursor: pointer;
-            background: #fafafa;
-        }
-
-        .priority-option.selected {
-            border-color: #888;
-            background: #e8e8e8;
-            color: #444;
-            font-weight: bold;
-        }
-
-        /* Summary panel */
-        .summary-panel {
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            padding: 16px;
-            position: sticky;
-            top: 20px;
-        }
-
-        .summary-panel h2 {
-            font-size: 15px;
-            color: #555;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .summary-row {
-            margin-bottom: 10px;
-        }
-
-        .summary-row .summary-label {
-            font-size: 11px;
-            color: #999;
-            margin-bottom: 2px;
-        }
-
-        .summary-row .summary-value {
-            font-size: 13px;
-            color: #444;
-        }
-
-        .summary-placeholder {
-            background: #f5f5f5;
-            border: 1px dashed #ccc;
-            border-radius: 4px;
-            padding: 10px;
-            font-size: 11px;
+        /* Conditional field banner */
+        .cond-note {
+            font-size: 10px;
             color: #bbb;
-            text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 4px;
+            font-style: italic;
         }
 
-        .divider {
+        /* Divider */
+        hr.form-divider {
             border: none;
             border-top: 1px solid #eee;
-            margin: 12px 0;
+            margin: 16px 0;
         }
 
-        /* Action buttons */
+        /* Buttons row */
         .form-actions {
             display: flex;
+            justify-content: flex-end;
             gap: 8px;
-            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
+            margin-top: 8px;
         }
 
         .btn {
-            display: inline-block;
-            padding: 8px 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
             border-radius: 4px;
             font-size: 13px;
             cursor: pointer;
@@ -220,8 +192,47 @@
             background: #555;
             color: white;
             border-color: #555;
-            flex: 1;
-            text-align: center;
+        }
+
+        .btn-icon-placeholder {
+            width: 14px;
+            height: 14px;
+            background: #aaa;
+            border-radius: 2px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* Mode label */
+        .mode-banner {
+            background: #e8e8e8;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 11px;
+            color: #777;
+            margin-bottom: 14px;
+            display: inline-block;
+        }
+
+        /* Edit mode section */
+        .edit-mode-section {
+            margin-top: 40px;
+        }
+
+        .section-separator-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #888;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px dashed #ddd;
+        }
+
+        /* Pre-filled value style for edit mode */
+        .prefilled {
+            background: #f0f0f0;
+            color: #555;
         }
 
         .note-box {
@@ -238,7 +249,7 @@
 <body>
     <div class="header">
         <h1>VoiceOps</h1>
-        <span class="user-info">Manager: Sarah Johnson</span>
+        <span class="user-info">Admin: Sarah Johnson</span>
     </div>
 
     <div class="nav">
@@ -249,113 +260,250 @@
     </div>
 
     <div class="container">
-        <h1 class="page-title">Create Work Order</h1>
+        <h1 class="page-title">Work Order Sheet</h1>
+        <p class="page-sub">Slide-over sheet — triggered from the Work Orders list view.</p>
 
-        <div class="form-layout">
-            <!-- Left: Form -->
-            <div>
-                <div class="section">
-                    <h2>Job Details</h2>
+        <!-- ═══════════════════════════════════════════════
+             CREATE MODE
+             ═══════════════════════════════════════════════ -->
+        <div class="mode-banner">Create mode — isEditing = false</div>
 
-                    <div class="form-group">
-                        <label>Customer *</label>
-                        <select>
-                            <option value="">— Select customer —</option>
-                            <option>Ben Carter</option>
-                            <option>Lisa Wang</option>
-                            <option>Omar Hassan</option>
-                        </select>
-                    </div>
+        <div class="sheet-panel">
+            <div class="sheet-title">Create Work Order</div>
+            <div class="sheet-desc">Fill in the details to create a new work order.</div>
 
-                    <div class="form-group">
-                        <label>Service *</label>
-                        <select>
-                            <option value="">— Select service —</option>
-                            <option>On-site Repair</option>
-                            <option>In-house Repair</option>
-                            <option>Pickup</option>
-                            <option>Delivery</option>
-                        </select>
-                    </div>
+            <!-- 1. work_order_type -->
+            <div class="form-group">
+                <label>Type</label>
+                <select>
+                    <option>Select type</option>
+                    <option selected>On Site</option>
+                    <option>In House</option>
+                    <option>Pickup</option>
+                    <option>Delivery</option>
+                </select>
+                <div class="field-error">errors.work_order_type — e.g. "The type field is required."</div>
+            </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Scheduled Date *</label>
-                            <input type="date" value="2026-04-20" />
-                        </div>
-                        <div class="form-group">
-                            <label>Scheduled Time *</label>
-                            <input type="time" value="09:00" />
-                        </div>
-                    </div>
+            <!-- 2. customer_id -->
+            <div class="form-group">
+                <label>Customer</label>
+                <input type="text" placeholder="Search customer..." />
+                <div class="async-note">(async searchable — fetches from /admin/customers/search)</div>
+                <div class="field-error">errors.customer_id — e.g. "Please select a customer."</div>
+            </div>
 
-                    <div class="form-group">
-                        <label>Priority *</label>
-                        <div class="priority-group">
-                            <div class="priority-option">Low</div>
-                            <div class="priority-option selected">Medium</div>
-                            <div class="priority-option">High</div>
-                            <div class="priority-option">Urgent</div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Address</label>
-                        <input type="text" placeholder="e.g. 14 George St, Brisbane QLD 4000" />
-                    </div>
-
-                    <div class="form-group">
-                        <label>Notes</label>
-                        <textarea placeholder="Any additional details about the job..."></textarea>
-                    </div>
+            <!-- 3+4. customer_name + customer_phone — shown only when customer_id is empty -->
+            <div class="cond-note">Fields below shown only when no existing customer is selected (customer_id empty)</div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label>Customer Name</label>
+                    <input type="text" placeholder="New customer name" />
+                    <div class="field-error">errors.customer_name</div>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="text" placeholder="Phone number" />
+                    <div class="field-error">errors.customer_phone</div>
                 </div>
             </div>
 
-            <!-- Right: Summary Panel -->
-            <div class="summary-panel">
-                <h2>Order Summary</h2>
+            <!-- 5. service_id -->
+            <div class="form-group">
+                <label>Service</label>
+                <input type="text" placeholder="Search service..." />
+                <div class="async-note">(async searchable — fetches from /admin/services/search)</div>
+                <div class="field-error">errors.service_id</div>
+            </div>
 
-                <div class="summary-row">
-                    <div class="summary-label">Customer</div>
-                    <div class="summary-value">— not selected —</div>
+            <!-- 6. technician_id -->
+            <div class="form-group">
+                <label>Technician</label>
+                <input type="text" placeholder="Auto-assign or search..." />
+                <div class="async-note">(async searchable — fetches from /admin/technicians/search)</div>
+                <div class="field-error">errors.technician_id</div>
+            </div>
+
+            <!-- 7. priority -->
+            <div class="form-group">
+                <label>Priority</label>
+                <select>
+                    <option>Select priority</option>
+                    <option>Low</option>
+                    <option selected>Normal</option>
+                    <option>High</option>
+                    <option>Urgent</option>
+                </select>
+                <div class="field-error">errors.priority</div>
+            </div>
+
+            <!-- 8. scheduled_at -->
+            <div class="form-group">
+                <label>Scheduled Start</label>
+                <input type="datetime-local" value="2026-04-20T09:00" />
+                <div class="field-error">errors.scheduled_at</div>
+            </div>
+
+            <!-- 9+10. state_id + city_id — 2-col grid -->
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label>State</label>
+                    <input type="text" placeholder="Select state..." />
+                    <div class="async-note">(async searchable)</div>
+                    <div class="field-error">errors.state_id</div>
+                </div>
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" placeholder="Select city..." style="background:#f0f0f0;color:#aaa;" />
+                    <div class="async-note">(async searchable — disabled until state selected)</div>
+                    <div class="field-error">errors.city_id</div>
+                </div>
+            </div>
+
+            <!-- 11. service_address — shown only when work_order_type = on_site -->
+            <div class="cond-note">Field below shown only when Type = On Site</div>
+            <div class="form-group">
+                <label>Service Address</label>
+                <textarea rows="2" placeholder="Enter service address"></textarea>
+                <div class="field-error">errors.service_address</div>
+            </div>
+
+            <!-- 12. tags -->
+            <div class="form-group">
+                <label>Tags</label>
+                <input type="text" placeholder="Enter tags (comma-separated)" />
+                <div class="field-error">errors.tags</div>
+            </div>
+
+            <!-- 13. issue_description -->
+            <div class="form-group">
+                <label>Issue Description</label>
+                <textarea rows="3" placeholder="Issue description or notes"></textarea>
+                <div class="field-error">errors.issue_description</div>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn">Cancel</button>
+                <button class="btn btn-primary">
+                    <span class="btn-icon-placeholder"></span> Create Work Order
+                </button>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════
+             EDIT MODE — same form, pre-filled values
+             ═══════════════════════════════════════════════ -->
+        <div class="edit-mode-section">
+            <div class="section-separator-label">Edit mode — same form with pre-filled values (isEditing = true)</div>
+
+            <div class="mode-banner">Edit mode — isEditing = true, workOrder prop passed in</div>
+
+            <div class="sheet-panel">
+                <div class="sheet-title">Edit Work Order</div>
+                <div class="sheet-desc">Update the work order details.</div>
+
+                <!-- 1. work_order_type -->
+                <div class="form-group">
+                    <label>Type</label>
+                    <select>
+                        <option>On Site</option>
+                        <option class="prefilled" selected>In House</option>
+                        <option>Pickup</option>
+                        <option>Delivery</option>
+                    </select>
+                    <div class="field-error">errors.work_order_type</div>
                 </div>
 
-                <div class="summary-placeholder">
-                    Customer details will appear here once selected
+                <!-- 2. customer_id — pre-filled, so customer_name/phone row is hidden -->
+                <div class="form-group">
+                    <label>Customer</label>
+                    <input type="text" class="prefilled" value="Ben Carter" />
+                    <div class="async-note">(async searchable — pre-populated with workOrder.customer.name)</div>
+                    <div class="field-error">errors.customer_id</div>
                 </div>
 
-                <hr class="divider" />
+                <!-- 3+4. hidden in edit mode because customer_id is set -->
+                <div class="cond-note">Customer Name / Phone fields hidden — customer_id is pre-filled</div>
 
-                <div class="summary-row">
-                    <div class="summary-label">Service</div>
-                    <div class="summary-value">— not selected —</div>
+                <!-- 5. service_id -->
+                <div class="form-group">
+                    <label>Service</label>
+                    <input type="text" class="prefilled" value="In-house Repair" />
+                    <div class="async-note">(async searchable — pre-populated with workOrder.service.name)</div>
+                    <div class="field-error">errors.service_id</div>
                 </div>
 
-                <div class="summary-placeholder">
-                    Service details will appear here once selected
+                <!-- 6. technician_id -->
+                <div class="form-group">
+                    <label>Technician</label>
+                    <input type="text" class="prefilled" value="David Lee" />
+                    <div class="async-note">(async searchable — pre-populated with workOrder.technician.name)</div>
+                    <div class="field-error">errors.technician_id</div>
                 </div>
 
-                <hr class="divider" />
-
-                <div class="summary-row">
-                    <div class="summary-label">Scheduled</div>
-                    <div class="summary-value">Mon 20 Apr 2026, 9:00 AM</div>
+                <!-- 7. priority -->
+                <div class="form-group">
+                    <label>Priority</label>
+                    <select>
+                        <option>Low</option>
+                        <option selected class="prefilled">High</option>
+                        <option>Normal</option>
+                        <option>Urgent</option>
+                    </select>
+                    <div class="field-error">errors.priority</div>
                 </div>
 
-                <div class="summary-row">
-                    <div class="summary-label">Priority</div>
-                    <div class="summary-value">Medium</div>
+                <!-- 8. scheduled_at -->
+                <div class="form-group">
+                    <label>Scheduled Start</label>
+                    <input type="datetime-local" class="prefilled" value="2026-04-21T10:30" />
+                    <div class="field-error">errors.scheduled_at</div>
+                </div>
+
+                <!-- 9+10. state_id + city_id -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label>State</label>
+                        <input type="text" class="prefilled" value="Queensland" />
+                        <div class="async-note">(async searchable — pre-populated)</div>
+                        <div class="field-error">errors.state_id</div>
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" class="prefilled" value="Brisbane" />
+                        <div class="async-note">(async searchable — enabled, state is set)</div>
+                        <div class="field-error">errors.city_id</div>
+                    </div>
+                </div>
+
+                <!-- 11. service_address — hidden because type = in_house -->
+                <div class="cond-note">Service Address hidden — Type is not On Site</div>
+
+                <!-- 12. tags -->
+                <div class="form-group">
+                    <label>Tags</label>
+                    <input type="text" class="prefilled" value="warranty, screen-repair" />
+                    <div class="field-error">errors.tags</div>
+                </div>
+
+                <!-- 13. issue_description -->
+                <div class="form-group">
+                    <label>Issue Description</label>
+                    <textarea rows="3" class="prefilled">Cracked screen, customer reports touchscreen unresponsive in bottom-right corner.</textarea>
+                    <div class="field-error">errors.issue_description</div>
                 </div>
 
                 <div class="form-actions">
-                    <a href="manager-dashboard.html" class="btn">Cancel</a>
-                    <button class="btn btn-primary">Save Work Order</button>
+                    <button class="btn">Cancel</button>
+                    <button class="btn btn-primary">
+                        <span class="btn-icon-placeholder"></span> Update Work Order
+                    </button>
                 </div>
             </div>
         </div>
 
         <div class="note-box">
-            [Wireframe] — Create Work Order — VoiceOps FSM
+            [Wireframe] — Create / Edit Work Order Sheet — VoiceOps FSM
         </div>
     </div>
 </body>

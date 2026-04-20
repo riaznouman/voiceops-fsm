@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceOps - Create Work Order (Wireframe)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .header {
+            background: #555;
+            color: white;
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .header .user-info {
+            font-size: 13px;
+            color: #ccc;
+        }
+
+        .nav {
+            background: #666;
+            padding: 8px 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav a {
+            color: #ddd;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 4px 0;
+        }
+
+        .nav a.active {
+            color: white;
+            border-bottom: 2px solid white;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 16px;
+        }
+
+        .page-title {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: #444;
+        }
+
+        .form-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 16px;
+            align-items: start;
+        }
+
+        .section {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .section h2 {
+            font-size: 15px;
+            color: #555;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #444;
+            background: #fafafa;
+        }
+
+        .form-group textarea {
+            height: 70px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .priority-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .priority-option {
+            flex: 1;
+            text-align: center;
+            padding: 7px 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+            background: #fafafa;
+        }
+
+        .priority-option.selected {
+            border-color: #888;
+            background: #e8e8e8;
+            color: #444;
+            font-weight: bold;
+        }
+
+        /* Summary panel */
+        .summary-panel {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 16px;
+            position: sticky;
+            top: 20px;
+        }
+
+        .summary-panel h2 {
+            font-size: 15px;
+            color: #555;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-row {
+            margin-bottom: 10px;
+        }
+
+        .summary-row .summary-label {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 2px;
+        }
+
+        .summary-row .summary-value {
+            font-size: 13px;
+            color: #444;
+        }
+
+        .summary-placeholder {
+            background: #f5f5f5;
+            border: 1px dashed #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 11px;
+            color: #bbb;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #eee;
+            margin: 12px 0;
+        }
+
+        /* Action buttons */
+        .form-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            border: 1px solid #aaa;
+            background: #eee;
+            color: #555;
+        }
+
+        .btn-primary {
+            background: #555;
+            color: white;
+            border-color: #555;
+            flex: 1;
+            text-align: center;
+        }
+
+        .note-box {
+            background: #f9f9f9;
+            border: 1px dashed #ccc;
+            padding: 10px;
+            font-size: 11px;
+            color: #999;
+            margin-top: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>VoiceOps</h1>
+        <span class="user-info">Manager: Sarah Johnson</span>
+    </div>
+
+    <div class="nav">
+        <a href="manager-dashboard.html">Dashboard</a>
+        <a href="#" class="active">Work Orders</a>
+        <a href="#">Technicians</a>
+        <a href="#">Reports</a>
+    </div>
+
+    <div class="container">
+        <h1 class="page-title">Create Work Order</h1>
+
+        <div class="form-layout">
+            <!-- Left: Form -->
+            <div>
+                <div class="section">
+                    <h2>Job Details</h2>
+
+                    <div class="form-group">
+                        <label>Customer *</label>
+                        <select>
+                            <option value="">— Select customer —</option>
+                            <option>Ben Carter</option>
+                            <option>Lisa Wang</option>
+                            <option>Omar Hassan</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Service *</label>
+                        <select>
+                            <option value="">— Select service —</option>
+                            <option>On-site Repair</option>
+                            <option>In-house Repair</option>
+                            <option>Pickup</option>
+                            <option>Delivery</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Scheduled Date *</label>
+                            <input type="date" value="2026-04-20" />
+                        </div>
+                        <div class="form-group">
+                            <label>Scheduled Time *</label>
+                            <input type="time" value="09:00" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Priority *</label>
+                        <div class="priority-group">
+                            <div class="priority-option">Low</div>
+                            <div class="priority-option selected">Medium</div>
+                            <div class="priority-option">High</div>
+                            <div class="priority-option">Urgent</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" placeholder="e.g. 14 George St, Brisbane QLD 4000" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea placeholder="Any additional details about the job..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Summary Panel -->
+            <div class="summary-panel">
+                <h2>Order Summary</h2>
+
+                <div class="summary-row">
+                    <div class="summary-label">Customer</div>
+                    <div class="summary-value">— not selected —</div>
+                </div>
+
+                <div class="summary-placeholder">
+                    Customer details will appear here once selected
+                </div>
+
+                <hr class="divider" />
+
+                <div class="summary-row">
+                    <div class="summary-label">Service</div>
+                    <div class="summary-value">— not selected —</div>
+                </div>
+
+                <div class="summary-placeholder">
+                    Service details will appear here once selected
+                </div>
+
+                <hr class="divider" />
+
+                <div class="summary-row">
+                    <div class="summary-label">Scheduled</div>
+                    <div class="summary-value">Mon 20 Apr 2026, 9:00 AM</div>
+                </div>
+
+                <div class="summary-row">
+                    <div class="summary-label">Priority</div>
+                    <div class="summary-value">Medium</div>
+                </div>
+
+                <div class="form-actions">
+                    <a href="manager-dashboard.html" class="btn">Cancel</a>
+                    <button class="btn btn-primary">Save Work Order</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="note-box">
+            [Wireframe] — Create Work Order — VoiceOps FSM
+        </div>
+    </div>
+</body>
+</html>

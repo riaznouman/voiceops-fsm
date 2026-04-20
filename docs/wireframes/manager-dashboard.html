@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceOps - Manager Dashboard (Wireframe)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .header {
+            background: #555;
+            color: white;
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .header .user-info {
+            font-size: 13px;
+            color: #ccc;
+        }
+
+        .nav {
+            background: #666;
+            padding: 8px 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav a {
+            color: #ddd;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 4px 0;
+        }
+
+        .nav a.active {
+            color: white;
+            border-bottom: 2px solid white;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 16px;
+        }
+
+        .page-title {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: #444;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .stat-card .label {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .section {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section-header h2 {
+            font-size: 15px;
+            color: #555;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            border: 1px solid #aaa;
+            background: #eee;
+            color: #555;
+        }
+
+        .btn-primary {
+            background: #555;
+            color: white;
+            border-color: #555;
+        }
+
+        /* Technician status list */
+        .tech-list-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tech-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1px solid #999;
+            background: #ddd;
+            flex-shrink: 0;
+        }
+
+        .status-dot.active {
+            background: #888;
+            border-color: #666;
+        }
+
+        .status-dot.idle {
+            background: #ccc;
+            border-color: #aaa;
+        }
+
+        .tech-name {
+            font-size: 13px;
+            font-weight: bold;
+            color: #444;
+            min-width: 120px;
+        }
+
+        .tech-job {
+            font-size: 12px;
+            color: #888;
+            flex: 1;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            border: 1px solid #aaa;
+            color: #666;
+            background: #eee;
+        }
+
+        .status-badge.in-progress {
+            border-color: #999;
+            background: #ddd;
+        }
+
+        /* Work orders table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        thead th {
+            text-align: left;
+            padding: 6px 8px;
+            color: #888;
+            border-bottom: 1px solid #ddd;
+            font-weight: normal;
+        }
+
+        tbody td {
+            padding: 8px 8px;
+            border-bottom: 1px solid #eee;
+            color: #555;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover td {
+            background: #f9f9f9;
+        }
+
+        .wo-id {
+            font-weight: bold;
+            color: #444;
+        }
+
+        .note-box {
+            background: #f9f9f9;
+            border: 1px dashed #ccc;
+            padding: 10px;
+            font-size: 11px;
+            color: #999;
+            margin-top: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>VoiceOps</h1>
+        <span class="user-info">Manager: Sarah Johnson</span>
+    </div>
+
+    <div class="nav">
+        <a href="manager-dashboard.html" class="active">Dashboard</a>
+        <a href="#">Work Orders</a>
+        <a href="#">Technicians</a>
+        <a href="#">Reports</a>
+    </div>
+
+    <div class="container">
+        <h1 class="page-title">Manager Dashboard</h1>
+
+        <!-- Top Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="number">12</div>
+                <div class="label">Active Jobs</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">8</div>
+                <div class="label">Today's Jobs</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">5</div>
+                <div class="label">Technicians on Duty</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">3</div>
+                <div class="label">Pending Dispatch</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Quick Actions</h2>
+            </div>
+            <div class="quick-actions">
+                <a href="create-work-order.html" class="btn btn-primary">+ Create Work Order</a>
+                <a href="#" class="btn">Assign Technician</a>
+            </div>
+        </div>
+
+        <!-- Technician Status List -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Technician Status</h2>
+            </div>
+
+            <div class="tech-list-item">
+                <div class="status-dot active"></div>
+                <div class="tech-name">John Smith</div>
+                <div class="tech-job">WO-1042 — On-site repair, 14 George St</div>
+                <span class="status-badge in-progress">In Progress</span>
+            </div>
+            <div class="tech-list-item">
+                <div class="status-dot active"></div>
+                <div class="tech-name">Maria Torres</div>
+                <div class="tech-job">WO-1039 — Pickup, 8 Roma St</div>
+                <span class="status-badge in-progress">En Route</span>
+            </div>
+            <div class="tech-list-item">
+                <div class="status-dot active"></div>
+                <div class="tech-name">David Lee</div>
+                <div class="tech-job">WO-1045 — In-house repair, Workshop</div>
+                <span class="status-badge">Assigned</span>
+            </div>
+            <div class="tech-list-item">
+                <div class="status-dot idle"></div>
+                <div class="tech-name">Priya Nair</div>
+                <div class="tech-job">No active job</div>
+                <span class="status-badge">Idle</span>
+            </div>
+            <div class="tech-list-item">
+                <div class="status-dot idle"></div>
+                <div class="tech-name">Tom Nguyen</div>
+                <div class="tech-job">No active job</div>
+                <span class="status-badge">Idle</span>
+            </div>
+        </div>
+
+        <!-- Recent Work Orders Table -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Recent Work Orders</h2>
+                <a href="#" class="btn">View All</a>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Service</th>
+                        <th>Status</th>
+                        <th>Technician</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="wo-id">WO-1045</td>
+                        <td>Ben Carter</td>
+                        <td>In-house Repair</td>
+                        <td><span class="status-badge">Assigned</span></td>
+                        <td>David Lee</td>
+                        <td>11:30 AM</td>
+                    </tr>
+                    <tr>
+                        <td class="wo-id">WO-1044</td>
+                        <td>Lisa Wang</td>
+                        <td>On-site Repair</td>
+                        <td><span class="status-badge in-progress">In Progress</span></td>
+                        <td>John Smith</td>
+                        <td>10:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td class="wo-id">WO-1043</td>
+                        <td>Omar Hassan</td>
+                        <td>Pickup</td>
+                        <td><span class="status-badge">Completed</span></td>
+                        <td>Maria Torres</td>
+                        <td>9:15 AM</td>
+                    </tr>
+                    <tr>
+                        <td class="wo-id">WO-1042</td>
+                        <td>Sarah Kim</td>
+                        <td>Delivery</td>
+                        <td><span class="status-badge">Completed</span></td>
+                        <td>Tom Nguyen</td>
+                        <td>8:45 AM</td>
+                    </tr>
+                    <tr>
+                        <td class="wo-id">WO-1041</td>
+                        <td>James Patel</td>
+                        <td>On-site Repair</td>
+                        <td><span class="status-badge">Completed</span></td>
+                        <td>Priya Nair</td>
+                        <td>8:00 AM</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="note-box">
+            [Wireframe] — Manager Dashboard — VoiceOps FSM
+        </div>
+    </div>
+</body>
+</html>

@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useSession, signOut } from "next-auth/react";
+import { LogOut } from "lucide-react";
 
 const navItems = [
   { label: "Dashboard", href: "/admin/dashboard" },
@@ -15,6 +18,32 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function onClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    function onEscape(e: KeyboardEvent) {
+      if (e.key === "Escape") setMenuOpen(false);
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    document.addEventListener("keydown", onEscape);
+    return () => {
+      document.removeEventListener("mousedown", onClickOutside);
+      document.removeEventListener("keydown", onEscape);
+    };
+  }, [menuOpen]);
+
+  const userName = session?.user?.name ?? "";
+  const userEmail = session?.user?.email ?? "";
+  const userRole = session?.user?.role ?? "";
+  const initial = userName.charAt(0).toUpperCase() || "?";
 
   return (
     <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col bg-gray-800">
@@ -47,18 +76,49 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="flex items-center gap-2.5 border-t border-gray-700 bg-gray-900 px-4 py-3.5">
-        <div className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full bg-gray-700 text-[13px] font-bold text-gray-400">
-          S
-        </div>
-        <div className="min-w-0">
-          <div className="text-[10px] uppercase tracking-[0.05em] text-gray-500">
-            Signed in as
+      <div className="relative border-t border-gray-700" ref={menuRef}>
+        {menuOpen && (
+          <div className="absolute right-2 bottom-full left-2 mb-2 overflow-hidden rounded-md border border-gray-200 bg-white text-sm shadow-lg">
+            <div className="px-3 py-2 text-xs text-gray-500">
+              <div className="truncate">{userEmail}</div>
+            </div>
+            <div className="border-t border-gray-100" />
+            <button
+              type="button"
+              onClick={() => {
+                setMenuOpen(false);
+                signOut({ callbackUrl: "/login" });
+              }}
+              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+            >
+              <LogOut size={14} />
+              Sign out
+            </button>
           </div>
-          <div className="truncate text-[13px] text-gray-300">
-            Sarah Johnson
+        )}
+
+        <button
+          type="button"
+          onClick={() => setMenuOpen((v) => !v)}
+          className="flex w-full items-center gap-2.5 bg-gray-900 px-4 py-3.5 text-left transition-colors hover:bg-black/30"
+        >
+          <div className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full bg-gray-700 text-[13px] font-bold text-gray-200">
+            {initial}
           </div>
-        </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-[10px] uppercase tracking-[0.05em] text-gray-500">
+              Signed in as
+            </div>
+            <div className="truncate text-[13px] text-gray-300">
+              {userName || "—"}
+            </div>
+            {userRole && (
+              <span className="mt-1 inline-block rounded border border-blue-700 bg-blue-700/30 px-1.5 py-0.5 text-[10px] font-semibold tracking-wider text-blue-200 uppercase">
+                {userRole}
+              </span>
+            )}
+          </div>
+        </button>
       </div>
     </aside>
   );

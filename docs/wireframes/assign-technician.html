@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceOps - Assign Technician (Wireframe)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .header {
+            background: #555;
+            color: white;
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .header .user-info {
+            font-size: 13px;
+            color: #ccc;
+        }
+
+        .nav {
+            background: #666;
+            padding: 8px 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav a {
+            color: #ddd;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 4px 0;
+        }
+
+        .nav a.active {
+            color: white;
+            border-bottom: 2px solid white;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 12px auto 20px;
+            padding: 0 16px;
+        }
+
+        .page-hint {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+
+        /* Overlay background */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            z-index: 100;
+            padding: 60px 16px 30px;
+            overflow-y: auto;
+        }
+
+        .modal {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 100%;
+            max-width: 520px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            padding: 16px 20px 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .wo-ref {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+
+        .modal-desc {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .modal-body {
+            padding: 16px 20px;
+        }
+
+        /* Work order summary block */
+        .summary-block {
+            background: #f9f9f9;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+            padding: 10px 12px;
+            margin-bottom: 16px;
+        }
+
+        .summary-row {
+            display: flex;
+            font-size: 12px;
+            padding: 3px 0;
+        }
+
+        .summary-label {
+            color: #888;
+            width: 90px;
+            flex-shrink: 0;
+        }
+
+        .summary-value {
+            color: #444;
+            flex: 1;
+        }
+
+        /* Form group */
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 7px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #444;
+            background: #fafafa;
+        }
+
+        .async-note {
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 3px;
+            font-style: italic;
+        }
+
+        /* Technician list — open dropdown panel */
+        .tech-list {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 6px;
+            background: white;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+
+        .tech-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+
+        .tech-row:last-child {
+            border-bottom: none;
+        }
+
+        .tech-row:hover {
+            background: #f5f5f5;
+        }
+
+        .tech-row.selected {
+            background: #ececec;
+            border-left: 3px solid #777;
+            padding-left: 9px;
+        }
+
+        .tech-avatar {
+            width: 32px;
+            height: 32px;
+            background: #ddd;
+            border: 1px solid #bbb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: bold;
+            color: #666;
+            flex-shrink: 0;
+        }
+
+        .tech-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tech-name {
+            font-size: 13px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        .tech-meta {
+            font-size: 11px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .tech-badges {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-size: 10px;
+            border: 1px solid #aaa;
+            color: #666;
+            background: #eee;
+        }
+
+        .badge.skill-match {
+            background: #e0e0e0;
+            border-color: #999;
+            color: #444;
+        }
+
+        .badge.available {
+            background: #ddd;
+            border-color: #888;
+            color: #333;
+        }
+
+        .badge.busy {
+            background: #f0f0f0;
+            border-color: #bbb;
+            color: #999;
+        }
+
+        textarea.notes {
+            width: 100%;
+            padding: 7px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #444;
+            background: #fafafa;
+            resize: vertical;
+            min-height: 60px;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Footer / actions */
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 12px 20px 16px;
+            border-top: 1px solid #eee;
+        }
+
+        .btn {
+            padding: 7px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            border: 1px solid #aaa;
+            background: #eee;
+            color: #555;
+        }
+
+        .btn-primary {
+            background: #555;
+            color: white;
+            border-color: #555;
+        }
+
+        .btn-primary.disabled {
+            background: #bbb;
+            border-color: #bbb;
+            color: #eee;
+            cursor: not-allowed;
+        }
+
+        .note-box {
+            background: #f9f9f9;
+            border: 1px dashed #ccc;
+            padding: 10px;
+            font-size: 11px;
+            color: #999;
+            margin-top: 12px;
+            text-align: center;
+            position: relative;
+            z-index: 200;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>VoiceOps</h1>
+        <span class="user-info">Admin: Sarah Johnson</span>
+    </div>
+
+    <div class="nav">
+        <a href="manager-dashboard.html">Dashboard</a>
+        <a href="#" class="active">Work Orders</a>
+        <a href="#">Technicians</a>
+        <a href="#">Reports</a>
+    </div>
+
+    <div class="container">
+        <p class="page-hint">[Wireframe shows the modal in its open state, triggered from the Work Order detail page or the work-orders list "Assign" action.]</p>
+    </div>
+
+    <!-- Modal overlay -->
+    <div class="overlay">
+        <div class="modal">
+            <!-- Header: title + WO ref -->
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span>Assign Technician</span>
+                    <span class="wo-ref">WO-2026-0042</span>
+                </div>
+                <div class="modal-desc">Select a technician to assign to this work order.</div>
+            </div>
+
+            <div class="modal-body">
+                <!-- Work order summary -->
+                <div class="summary-block">
+                    <div class="summary-row">
+                        <span class="summary-label">Customer</span>
+                        <span class="summary-value">Ben Carter</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Service</span>
+                        <span class="summary-value">On-site Electrical Repair</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Scheduled</span>
+                        <span class="summary-value">Mon 27 Apr 2026, 10:00 AM</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Address</span>
+                        <span class="summary-value">14 George St, Brisbane QLD 4000</span>
+                    </div>
+                </div>
+
+                <!-- Technician picker -->
+                <div class="form-group">
+                    <label>Technician</label>
+                    <input type="text" class="search-input" placeholder="Search technician..." />
+                    <div class="async-note">(async searchable — fetches from /admin/technicians/search)</div>
+
+                    <!-- Open dropdown / list of technicians -->
+                    <div class="tech-list">
+                        <div class="tech-row selected">
+                            <div class="tech-avatar">JS</div>
+                            <div class="tech-info">
+                                <div class="tech-name">John Smith</div>
+                                <div class="tech-meta">3 active jobs</div>
+                            </div>
+                            <div class="tech-badges">
+                                <span class="badge skill-match">Electrical &check;</span>
+                                <span class="badge available">Available</span>
+                            </div>
+                        </div>
+
+                        <div class="tech-row">
+                            <div class="tech-avatar">MT</div>
+                            <div class="tech-info">
+                                <div class="tech-name">Maria Torres</div>
+                                <div class="tech-meta">5 active jobs</div>
+                            </div>
+                            <div class="tech-badges">
+                                <span class="badge skill-match">Electrical &check;</span>
+                                <span class="badge busy">Busy</span>
+                            </div>
+                        </div>
+
+                        <div class="tech-row">
+                            <div class="tech-avatar">DL</div>
+                            <div class="tech-info">
+                                <div class="tech-name">David Lee</div>
+                                <div class="tech-meta">1 active job</div>
+                            </div>
+                            <div class="tech-badges">
+                                <span class="badge">Plumbing</span>
+                                <span class="badge available">Available</span>
+                            </div>
+                        </div>
+
+                        <div class="tech-row">
+                            <div class="tech-avatar">PN</div>
+                            <div class="tech-info">
+                                <div class="tech-name">Priya Nair</div>
+                                <div class="tech-meta">No active jobs</div>
+                            </div>
+                            <div class="tech-badges">
+                                <span class="badge skill-match">Electrical &check;</span>
+                                <span class="badge available">Available</span>
+                            </div>
+                        </div>
+
+                        <div class="tech-row">
+                            <div class="tech-avatar">TN</div>
+                            <div class="tech-info">
+                                <div class="tech-name">Tom Nguyen</div>
+                                <div class="tech-meta">4 active jobs</div>
+                            </div>
+                            <div class="tech-badges">
+                                <span class="badge">HVAC</span>
+                                <span class="badge busy">Busy</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Optional notes -->
+                <div class="form-group">
+                    <label>Notes for technician <span style="font-weight:normal;color:#aaa;">(optional)</span></label>
+                    <textarea class="notes" placeholder="Add any context the technician should know before starting the job..."></textarea>
+                </div>
+            </div>
+
+            <!-- Footer buttons -->
+            <div class="modal-footer">
+                <button class="btn">Cancel</button>
+                <!-- Disabled until a technician is selected; shown as enabled here because John Smith is selected above -->
+                <button class="btn btn-primary">Assign Technician</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="note-box">
+            [Wireframe] — Assign Technician Modal — VoiceOps FSM
+        </div>
+    </div>
+</body>
+</html>

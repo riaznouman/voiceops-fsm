@@ -1,4 +1,3 @@
-import { PAGE_NAVIGATOR } from "@/utls/navigator";
 import Link from "next/link";
 
 
@@ -10,7 +9,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
           <h1 className="text-xl font-bold text-gray-900">VoiceOps</h1>
           <Link
-            href={PAGE_NAVIGATOR.LOGIN}
+            href="/admin/dashboard"
             className="bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700"
           >
             Sign In
@@ -31,7 +30,7 @@ export default function Home() {
           </p>
           <div className="flex gap-4 justify-center">
             <Link
-              href="/login"
+              href="/admin/dashboard"
               className="bg-blue-600 text-white px-6 py-3 rounded text-sm font-medium hover:bg-blue-700"
             >
               Get Started
@@ -91,7 +90,7 @@ export default function Home() {
         <div className="mt-16 bg-white border border-gray-200 rounded-lg p-6 text-center">
           <p className="text-sm text-gray-500 mb-1">Project Status</p>
           <p className="text-base font-medium text-gray-800">
-            Sprint 0 — Planning & Setup (Week 2)
+            Sprint 1 — Auth + Data Model + Admin Shell delivered (Week 8)
           </p>
           <p className="text-sm text-gray-500 mt-1">
             COIT20273 — Software Design and Development Project — CQUniversity

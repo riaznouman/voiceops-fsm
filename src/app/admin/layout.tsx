@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Sidebar from "@/components/admin/Sidebar";
-import "./admin.css";
 
 export const metadata: Metadata = {
   title: "VoiceOps Admin",

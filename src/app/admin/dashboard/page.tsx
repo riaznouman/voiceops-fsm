@@ -37,16 +37,19 @@ const systemStats = {
   totalRoles: 5,
 };
 
+const sectionHeading =
+  "mt-6 mb-3 text-base font-semibold text-gray-900 first-of-type:mt-0";
+
 export default function DashboardPage() {
   return (
     <>
-      <h1 className="page-heading">Dashboard</h1>
-      <p className="page-subtext">
+      <h1 className="mb-1 text-2xl font-bold text-gray-900">Dashboard</h1>
+      <p className="mb-6 text-sm text-gray-500">
         Welcome back! Here&apos;s an overview of your application.
       </p>
 
-      <h2 className="section-heading">My Jobs Overview</h2>
-      <div className="stats-grid">
+      <h2 className={sectionHeading}>My Jobs Overview</h2>
+      <div className="mb-6 grid grid-cols-4 gap-4">
         <StatCard
           label="Total Jobs"
           value={myJobsStats.total}
@@ -73,8 +76,8 @@ export default function DashboardPage() {
         />
       </div>
 
-      <h2 className="section-heading">Work Orders Overview</h2>
-      <div className="stats-grid-5">
+      <h2 className={sectionHeading}>Work Orders Overview</h2>
+      <div className="mb-6 grid grid-cols-5 gap-4">
         <StatCard
           label="Total Work Orders"
           value={workOrderStats.total}
@@ -107,8 +110,8 @@ export default function DashboardPage() {
         />
       </div>
 
-      <h2 className="section-heading">System Stats</h2>
-      <div className="stats-grid">
+      <h2 className={sectionHeading}>System Stats</h2>
+      <div className="mb-6 grid grid-cols-4 gap-4">
         <StatCard
           label="Total Users"
           value={systemStats.totalUsers}
@@ -136,33 +139,46 @@ export default function DashboardPage() {
         />
       </div>
 
-      <h2 className="section-heading">Quick Actions</h2>
-      <div className="actions-grid">
-        <a href="/admin/settings" className="action-card">
-          <div className="action-head">
-            <div className="action-icon">
+      <h2 className={sectionHeading}>Quick Actions</h2>
+      <div className="mb-6 grid grid-cols-2 gap-4">
+        <a
+          href="/admin/settings"
+          className="block rounded-md border border-gray-300 bg-white p-5 text-inherit no-underline transition-colors hover:border-gray-400 hover:shadow-sm"
+        >
+          <div className="mb-2 flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-gray-100 text-blue-600">
               <Users size={18} />
             </div>
-            <div className="action-title">User Management</div>
+            <div className="text-[15px] font-semibold text-gray-900">
+              User Management
+            </div>
           </div>
-          <p className="action-desc">
+          <p className="mb-2.5 text-[13px] leading-relaxed text-gray-500">
             Manage users, permissions, and access controls for your application.
           </p>
-          <span className="action-link">View all users →</span>
+          <span className="text-[13px] font-semibold text-blue-600">
+            View all users →
+          </span>
         </a>
 
-        <a href="/admin/settings" className="action-card">
-          <div className="action-head">
-            <div className="action-icon">
+        <a
+          href="/admin/settings"
+          className="block rounded-md border border-gray-300 bg-white p-5 text-inherit no-underline transition-colors hover:border-gray-400 hover:shadow-sm"
+        >
+          <div className="mb-2 flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-gray-100 text-blue-600">
               <Shield size={18} />
             </div>
-            <div className="action-title">Role Management</div>
+            <div className="text-[15px] font-semibold text-gray-900">
+              Role Management
+            </div>
           </div>
-          <p className="action-desc">
-            Configure roles and permissions to control access across your
-            system.
+          <p className="mb-2.5 text-[13px] leading-relaxed text-gray-500">
+            Configure roles and permissions to control access across your system.
           </p>
-          <span className="action-link">Manage roles →</span>
+          <span className="text-[13px] font-semibold text-blue-600">
+            Manage roles →
+          </span>
         </a>
       </div>
 
@@ -170,12 +186,18 @@ export default function DashboardPage() {
 
       <RecentWorkOrders />
 
-      <section className="content-card">
-        <h2 className="content-card-title">Recent Activity</h2>
-        <div className="activity-placeholder">
+      <section className="mb-6 rounded-md border border-gray-300 bg-white p-5">
+        <h2 className="mb-3 border-b border-gray-200 pb-2.5 text-[15px] font-semibold text-gray-900">
+          Recent Activity
+        </h2>
+        <div className="flex flex-col items-center gap-2 p-5 text-gray-400">
           <Award size={28} />
-          <strong>Activity Feed Coming Soon</strong>
-          <span>Track user registrations, role changes, and system events.</span>
+          <strong className="font-semibold text-gray-500">
+            Activity Feed Coming Soon
+          </strong>
+          <span className="text-[13px]">
+            Track user registrations, role changes, and system events.
+          </span>
         </div>
       </section>
     </>

@@ -1,8 +1,14 @@
 import { verify } from "jsonwebtoken";
 import { NextRequest } from "next/server";
+import { auth } from "@/lib/auth";
 
 interface TokenPayload {
   sub: string;
+  role: string;
+}
+
+export interface CurrentUser {
+  userId: string;
   role: string;
 }
 
@@ -27,4 +33,20 @@ export function requireRole(roles: string[], request: NextRequest): TokenPayload
     throw { status: 403, message: "Insufficient permissions" };
   }
   return payload;
+}
+
+// Auth via Bearer token (mobile) or NextAuth session (admin panel)
+export async function getCurrentUser(request: NextRequest): Promise<CurrentUser> {
+  const authHeader = request.headers.get("authorization");
+  if (authHeader?.startsWith("Bearer ")) {
+    const payload = extractToken(request);
+    return { userId: payload.sub, role: payload.role };
+  }
+
+  const session = await auth();
+  if (session?.user?.id) {
+    return { userId: session.user.id, role: session.user.role };
+  }
+
+  throw { status: 401, message: "Unauthorized" };
 }

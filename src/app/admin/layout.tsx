@@ -12,9 +12,9 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="admin-shell">
+    <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
-      <main className="admin-main">{children}</main>
+      <main className="flex-1 overflow-y-auto p-8">{children}</main>
     </div>
   );
 }

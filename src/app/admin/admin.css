@@ -143,43 +143,322 @@
   margin-bottom: 24px;
 }
 
-/* Stats row */
+/* ── Section heading (between blocks) ────────────────── */
+.section-heading {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin: 24px 0 12px;
+}
+
+.section-heading:first-of-type {
+  margin-top: 0;
+}
+
+/* ── Stats grid ──────────────────────────────────────── */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
+}
+
+.stats-grid-5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 .stat-card {
   background: #fff;
-  border: 1px solid #d1d5db; /* Gray 300 */
+  border: 1px solid #d1d5db;
   border-radius: 6px;
-  padding: 20px 16px;
-  text-align: center;
+  padding: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.1s, box-shadow 0.1s;
 }
 
-.stat-number {
-  font-size: 32px;
-  font-weight: bold;
-  color: #374151; /* Gray 700 */
+.stat-card:hover {
+  border-color: #9ca3af;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.stat-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: #dbeafe; /* Primary Light */
+  color: #2563eb; /* Primary */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-body {
+  min-width: 0;
+  flex: 1;
 }
 
 .stat-label {
   font-size: 12px;
-  color: #6b7280; /* Gray 500 */
-  margin-top: 4px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
-/* Placeholder section card */
+.stat-number {
+  font-size: 24px;
+  font-weight: bold;
+  color: #111827;
+  margin-top: 2px;
+  line-height: 1.1;
+}
+
+.stat-desc {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+/* ── Quick actions (2-col card grid) ─────────────────── */
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.action-card {
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 20px;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: border-color 0.1s, box-shadow 0.1s;
+}
+
+.action-card:hover {
+  border-color: #9ca3af;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.action-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.action-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: #f3f4f6;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.action-desc {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.action-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+/* ── Content / placeholder card ──────────────────────── */
 .content-card {
   background: #fff;
   border: 1px solid #d1d5db;
   border-radius: 6px;
-  padding: 24px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.content-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .coming-soon {
   font-size: 14px;
   color: #9ca3af;
+}
+
+.activity-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  color: #9ca3af;
+}
+
+.activity-placeholder strong {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.activity-placeholder span {
+  font-size: 13px;
+}
+
+/* ── Technician status block ─────────────────────────── */
+.tech-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.tech-row:last-child {
+  border-bottom: none;
+}
+
+.tech-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tech-status-dot.available {
+  background: #10b981; /* Green — Completed */
+}
+
+.tech-status-dot.busy {
+  background: #f59e0b; /* Amber — Assigned */
+}
+
+.tech-status-dot.idle {
+  background: #d1d5db;
+}
+
+.tech-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.tech-job {
+  font-size: 13px;
+  color: #6b7280;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Status badges ───────────────────────────────────── */
+.status-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.status-badge.assigned {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+.status-badge.en-route {
+  background: #dbeafe;
+  color: #1e40af;
+  border-color: #bfdbfe;
+}
+
+.status-badge.in-progress {
+  background: #ede9fe;
+  color: #5b21b6;
+  border-color: #ddd6fe;
+}
+
+.status-badge.completed {
+  background: #d1fae5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+.status-badge.cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+.status-badge.idle {
+  background: #f3f4f6;
+  color: #6b7280;
+  border-color: #e5e7eb;
+}
+
+/* ── Recent work orders table ────────────────────────── */
+.recent-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.recent-table thead th {
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.recent-table tbody td {
+  padding: 10px;
+  color: #374151;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.recent-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.recent-table tbody tr:hover td {
+  background: #fafafa;
+}
+
+.recent-table .wo-id {
+  font-weight: 600;
+  color: #111827;
+  font-family: ui-monospace, "SF Mono", monospace;
+  font-size: 12px;
 }

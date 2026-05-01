@@ -34,43 +34,107 @@ enum WorkOrderPriority {
   URGENT
 }
 
-model User {
-  id            String     @id @default(cuid())
-  name          String
-  email         String     @unique
-  password      String
-  phone         String?
-  role          UserRole   @default(CUSTOMER)
-  status        UserStatus @default(ACTIVE)
-  hourlyRate    Float?
-  bio           String?
-  address       String?
-  profilePhoto  String?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  CANCELLED
+}
 
-  // work orders as customer
-  customerWorkOrders   WorkOrder[] @relation("CustomerWorkOrders")
-  // work orders as technician
-  technicianWorkOrders WorkOrder[] @relation("TechnicianWorkOrders")
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  password     String
+  phone        String?
+  role         UserRole   @default(CUSTOMER)
+  status       UserStatus @default(ACTIVE)
+  hourlyRate   Float?
+  bio          String?
+  address      String?
+  profilePhoto String?
+  lat          Float?
+  lng          Float?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  customerWorkOrders   WorkOrder[]       @relation("CustomerWorkOrders")
+  technicianWorkOrders WorkOrder[]       @relation("TechnicianWorkOrders")
+  technicianSkills     TechnicianSkill[]
+  notes                WorkOrderNote[]   @relation("NoteAuthor")
+  photos               WorkOrderPhoto[]  @relation("PhotoUploader")
+  activityLogs         ActivityLog[]     @relation("ActivityActor")
+  notifications        Notification[]
+  invoices             Invoice[]         @relation("InvoiceCustomer")
 
   @@map("users")
 }
 
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  services    Service[]
+
+  @@map("categories")
+}
+
 model Service {
-  id              String   @id @default(cuid())
+  id              String       @id @default(cuid())
   name            String
-  slug            String   @unique
+  slug            String       @unique
   description     String?
   durationMinutes Int?
   basePrice       Float?
-  isActive        Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  isActive        Boolean      @default(true)
+  categoryId      String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 
-  workOrders WorkOrder[]
+  workOrders    WorkOrder[]
+  category      Category?    @relation(fields: [categoryId], references: [id])
+  serviceSkills ServiceSkill[]
 
   @@map("services")
+}
+
+model Skill {
+  id               String            @id @default(cuid())
+  name             String
+  description      String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  technicianSkills TechnicianSkill[]
+  serviceSkills    ServiceSkill[]
+
+  @@map("skills")
+}
+
+model TechnicianSkill {
+  id        String   @id @default(cuid())
+  userId    String
+  skillId   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill     Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skillId])
+  @@map("technician_skills")
+}
+
+model ServiceSkill {
+  id        String  @id @default(cuid())
+  serviceId String
+  skillId   String
+  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  skill     Skill   @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([serviceId, skillId])
+  @@map("service_skills")
 }
 
 model WorkOrder {
@@ -83,6 +147,8 @@ model WorkOrder {
   priority         WorkOrderPriority @default(NORMAL)
   scheduledAt      DateTime?
   address          String?
+  lat              Float?
+  lng              Float?
   issueDescription String?
   resolutionNotes  String?
   cancelledAt      DateTime?
@@ -93,6 +159,114 @@ model WorkOrder {
   customer   User     @relation("CustomerWorkOrders", fields: [customerId], references: [id])
   technician User?    @relation("TechnicianWorkOrders", fields: [technicianId], references: [id])
   service    Service? @relation(fields: [serviceId], references: [id])
+  notes      WorkOrderNote[]
+  photos     WorkOrderPhoto[]
+  logs       ActivityLog[]
+  invoices   Invoice[]
 
   @@map("work_orders")
+}
+
+model WorkOrderNote {
+  id          String    @id @default(cuid())
+  workOrderId String
+  authorId    String
+  text        String
+  createdAt   DateTime  @default(now())
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  author      User      @relation("NoteAuthor", fields: [authorId], references: [id])
+
+  @@map("work_order_notes")
+}
+
+model WorkOrderPhoto {
+  id           String    @id @default(cuid())
+  workOrderId  String
+  uploadedById String
+  url          String
+  filename     String?
+  createdAt    DateTime  @default(now())
+  workOrder    WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  uploadedBy   User      @relation("PhotoUploader", fields: [uploadedById], references: [id])
+
+  @@map("work_order_photos")
+}
+
+model ActivityLog {
+  id          String    @id @default(cuid())
+  workOrderId String
+  actorId     String
+  action      String
+  fromValue   String?
+  toValue     String?
+  note        String?
+  createdAt   DateTime  @default(now())
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  actor       User      @relation("ActivityActor", fields: [actorId], references: [id])
+
+  @@map("activity_logs")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  body      String
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model CallSession {
+  id          String    @id @default(cuid())
+  fromNumber  String?
+  startedAt   DateTime  @default(now())
+  endedAt     DateTime?
+  durationSec Int?
+  summary     String?
+  transcript  Json?     @default("[]")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("call_sessions")
+}
+
+model Invoice {
+  id              String          @id @default(cuid())
+  workOrderId     String?
+  customerId      String
+  referenceNumber String          @unique
+  issueDate       DateTime        @default(now())
+  dueDate         DateTime?
+  subtotal        Float           @default(0)
+  taxRate         Float           @default(0.1)
+  taxAmount       Float           @default(0)
+  total           Float           @default(0)
+  status          InvoiceStatus   @default(DRAFT)
+  notes           String?
+  paidAt          DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  workOrder WorkOrder?        @relation(fields: [workOrderId], references: [id])
+  customer  User              @relation("InvoiceCustomer", fields: [customerId], references: [id])
+  lineItems InvoiceLineItem[]
+
+  @@map("invoices")
+}
+
+model InvoiceLineItem {
+  id          String  @id @default(cuid())
+  invoiceId   String
+  description String
+  quantity    Float
+  unitPrice   Float
+  lineTotal   Float
+  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@map("invoice_line_items")
 }

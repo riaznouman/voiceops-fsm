@@ -22,9 +22,11 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    await getCurrentUser(request);
+  } catch (err: unknown) {
+    const e = err as { status: number; message: string };
+    return NextResponse.json({ error: e.message }, { status: e.status ?? 401 });
   }
 
   const { id } = await params;

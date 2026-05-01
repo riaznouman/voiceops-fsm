@@ -23,6 +23,9 @@ export async function GET(request: NextRequest) {
       status: true,
       phone: true,
       createdAt: true,
+      technicianSkills: {
+        include: { skill: true },
+      },
     },
   });
 
@@ -67,7 +70,10 @@ export async function PATCH(request: NextRequest) {
         return NextResponse.json({ error: "Phone must be 20 characters or fewer" }, { status: 400 });
       }
       if (!PHONE_REGEX.test(trimmed)) {
-        return NextResponse.json({ error: "Phone may only contain digits, spaces, +, -, ( and )" }, { status: 400 });
+        return NextResponse.json(
+          { error: "Phone may only contain digits, spaces, +, -, ( and )" },
+          { status: 400 }
+        );
       }
       data.phone = trimmed;
     }

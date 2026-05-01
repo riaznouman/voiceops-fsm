@@ -4,15 +4,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
-import { LogOut } from "lucide-react";
+import { Bell, LogOut } from "lucide-react";
 
 const navItems = [
   { label: "Dashboard", href: "/admin/dashboard" },
   { label: "Work Orders", href: "/admin/work-orders" },
+  { label: "Calendar", href: "/admin/work-orders/calendar" },
+  { label: "Customers", href: "/admin/customers" },
   { label: "Technicians", href: "/admin/technicians" },
   { label: "Services", href: "/admin/services" },
-  { label: "Customers", href: "/admin/customers" },
+  { label: "Skills", href: "/admin/skills" },
+  { label: "Categories", href: "/admin/categories" },
   { label: "Invoices", href: "/admin/invoices" },
+  { label: "Voice Agent", href: "/admin/voice-agent" },
+  { label: "Calls", href: "/admin/calls" },
   { label: "Settings", href: "/admin/settings" },
 ];
 
@@ -21,6 +26,19 @@ export default function Sidebar() {
   const { data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    function fetchUnread() {
+      fetch("/api/notifications?unreadOnly=true&pageSize=1")
+        .then((r) => r.json())
+        .then((d) => setUnreadCount(d.total ?? (d.data?.length ?? 0)))
+        .catch(() => {});
+    }
+    fetchUnread();
+    const timer = setInterval(fetchUnread, 30_000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -47,20 +65,38 @@ export default function Sidebar() {
 
   return (
     <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col bg-gray-800">
-      <div className="flex items-center gap-2.5 border-b border-gray-700 px-4 pt-5 pb-4">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-blue-600 text-base font-bold text-white">
-          V
-        </span>
-        <span className="text-base font-bold tracking-tight text-gray-50">
-          VoiceOps
-        </span>
+      <div className="flex items-center justify-between border-b border-gray-700 px-4 pt-5 pb-4">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-blue-600 text-base font-bold text-white">
+            V
+          </span>
+          <span className="text-base font-bold tracking-tight text-gray-50">VoiceOps</span>
+        </div>
+        <Link
+          href="/admin/notifications"
+          className="relative text-gray-400 hover:text-gray-200"
+          title="Notifications"
+        >
+          <Bell size={18} />
+          {unreadCount > 0 && (
+            <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white">
+              {unreadCount > 9 ? "9+" : unreadCount}
+            </span>
+          )}
+        </Link>
       </div>
 
-      <nav className="flex flex-1 flex-col py-3">
+      <nav className="flex flex-1 flex-col overflow-y-auto py-3">
         {navItems.map((item) => {
           const isActive =
             pathname === item.href ||
-            (item.href !== "/admin/dashboard" && pathname.startsWith(item.href));
+            (item.href === "/admin/work-orders" &&
+              pathname.startsWith("/admin/work-orders/") &&
+              !pathname.startsWith("/admin/work-orders/calendar")) ||
+            (item.href !== "/admin/dashboard" &&
+              item.href !== "/admin/work-orders" &&
+              item.href !== "/admin/work-orders/calendar" &&
+              pathname.startsWith(item.href));
           const stateClasses = isActive
             ? "border-blue-600 bg-gray-700 font-semibold text-white"
             : "border-transparent text-gray-400 hover:bg-gray-700 hover:text-gray-50";
@@ -109,9 +145,7 @@ export default function Sidebar() {
             <div className="text-[10px] uppercase tracking-[0.05em] text-gray-500">
               Signed in as
             </div>
-            <div className="truncate text-[13px] text-gray-300">
-              {userName || "—"}
-            </div>
+            <div className="truncate text-[13px] text-gray-300">{userName || "—"}</div>
             {userRole && (
               <span className="mt-1 inline-block rounded border border-blue-700 bg-blue-700/30 px-1.5 py-0.5 text-[10px] font-semibold tracking-wider text-blue-200 uppercase">
                 {userRole}

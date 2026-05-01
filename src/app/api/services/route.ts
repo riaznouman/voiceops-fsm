@@ -4,6 +4,7 @@ import { requireRole } from "@/lib/auth-guard";
 
 export async function GET() {
   const services = await prisma.service.findMany({
+    include: { category: true },
     orderBy: { createdAt: "desc" },
   });
   return NextResponse.json(services);
@@ -18,7 +19,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { name, description, basePrice, durationMinutes, isActive } = body;
+  const { name, description, basePrice, durationMinutes, isActive, categoryId } = body;
 
   if (!name || !name.trim()) {
     return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -42,7 +43,9 @@ export async function POST(request: NextRequest) {
       basePrice: basePrice ?? null,
       durationMinutes: durationMinutes ?? null,
       isActive: typeof isActive === "boolean" ? isActive : true,
+      categoryId: categoryId ?? null,
     },
+    include: { category: true },
   });
 
   return NextResponse.json(service, { status: 201 });

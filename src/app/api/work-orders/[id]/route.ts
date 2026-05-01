@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { getCurrentUser } from "@/lib/auth-guard";
+import { logActivity } from "@/lib/activity-log";
 import {
   ALLOWED_TRANSITIONS,
   InvalidTransitionError,
@@ -17,7 +18,6 @@ const TECHNICIAN_ALLOWED_TARGETS: WorkOrderStatus[] = [
   "COMPLETED",
 ];
 
-// GET /api/work-orders/:id - get single work order
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -49,7 +49,6 @@ export async function GET(
   return NextResponse.json(workOrder);
 }
 
-// PATCH /api/work-orders/:id - update work order
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -74,7 +73,6 @@ export async function PATCH(
     return NextResponse.json({ error: "Work order not found" }, { status: 404 });
   }
 
-  // Status update requires transition + role checks
   if (body.status !== undefined) {
     if (!VALID_STATUSES.includes(body.status)) {
       return NextResponse.json(
@@ -126,5 +124,13 @@ export async function PATCH(
   }
 
   const updated = await prisma.workOrder.update({ where: { id }, data });
+
+  if (body.status !== undefined && body.status !== workOrder.status) {
+    await logActivity(id, user.userId, "STATUS_CHANGED", workOrder.status, body.status);
+  } else if (Object.keys(body).length > 0) {
+    await logActivity(id, user.userId, "UPDATED");
+  }
+
+  void ALLOWED_TRANSITIONS;
   return NextResponse.json(updated);
 }

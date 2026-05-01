@@ -7,7 +7,8 @@ import { LoaderCircle, Plus } from "lucide-react";
 import JobPriorityBadge from "@/components/admin/work-orders/JobPriorityBadge";
 import JobStatusBadge from "@/components/admin/work-orders/JobStatusBadge";
 import JobTableFilters from "@/components/admin/work-orders/JobTableFilters";
-import Pagination from "@/components/ui/Pagination";
+// TODO: uncomment before submit
+// import Pagination from "@/components/ui/Pagination";
 import type { WorkOrderStatus, WorkOrderPriority } from "@/lib/types";
 import { bodyCellClass, headCellClass, jobColumns } from "./columns";
 
@@ -168,7 +169,8 @@ function WorkOrdersContent() {
         </table>
       </section>
 
-      <Pagination page={page} pageSize={20} total={total} onPage={setPage} />
+      {/* TODO: uncomment before submit */}
+      {/* <Pagination page={page} pageSize={20} total={total} onPage={setPage} /> */}
     </>
   );
 }

@@ -29,15 +29,15 @@ export default function Sidebar() {
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    function fetchUnread() {
-      fetch("/api/notifications?unreadOnly=true&pageSize=1")
-        .then((r) => r.json())
-        .then((d) => setUnreadCount(d.total ?? (d.data?.length ?? 0)))
-        .catch(() => {});
-    }
-    fetchUnread();
-    const timer = setInterval(fetchUnread, 30_000);
-    return () => clearInterval(timer);
+    // function fetchUnread() {
+    //   fetch("/api/notifications?unreadOnly=true&pageSize=1")
+    //     .then((r) => r.json())
+    //     .then((d) => setUnreadCount(d.total ?? (d.data?.length ?? 0)))
+    //     .catch(() => {});
+    // }
+    // fetchUnread();
+    // const timer = setInterval(fetchUnread, 30_000);
+    // return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {

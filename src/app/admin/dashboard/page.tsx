@@ -51,14 +51,31 @@ export default function DashboardPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("/api/dashboard/stats")
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed to load stats");
-        return r.json();
-      })
-      .then(setStats)
-      .catch(() => setError("Could not load dashboard data."))
-      .finally(() => setLoading(false));
+    // fetch("/api/dashboard/stats")
+    //   .then((r) => {
+    //     if (!r.ok) throw new Error("Failed to load stats");
+    //     return r.json();
+    //   })
+    //   .then(setStats)
+    //   .catch(() => setError("Could not load dashboard data."))
+    //   .finally(() => setLoading(false));
+
+    setStats({
+      totalWorkOrders: 0,
+      byStatus: {
+        PENDING: 0,
+        EN_ROUTE: 0,
+        ON_SITE: 0,
+        IN_PROGRESS: 0,
+        COMPLETED: 0,
+        CANCELLED: 0,
+      },
+      todayJobs: 0,
+      activeTechnicians: 0,
+      unassignedJobs: 0,
+      recentActivity: [],
+    });
+    setLoading(false);
   }, []);
 
   if (loading) {

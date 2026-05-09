@@ -53,7 +53,10 @@ function LoginForm() {
             Log in to your account
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            Enter your email and password below to log in
+            Don&apos;t have an account?{" "}
+            <Link href="/register" className="text-blue-600 hover:underline">
+              Register
+            </Link>
           </p>
         </div>
 

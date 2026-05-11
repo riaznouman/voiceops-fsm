@@ -35,7 +35,7 @@ export default function ForgotPasswordPage() {
         <div className="mb-6 text-center">
           <h1 className="text-xl font-semibold text-gray-900">Forgot password</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Enter your email and we'll send you a reset link.
+            Enter your email and we&apos;ll send you a 6-digit reset code.
           </p>
         </div>
 
@@ -43,11 +43,17 @@ export default function ForgotPasswordPage() {
           <div className="rounded-md border border-green-200 bg-green-50 px-4 py-4 text-sm text-green-700">
             <p className="font-medium">Check your inbox</p>
             <p className="mt-1 text-green-600">
-              If that email exists we'll send a reset link.
+              If that email is registered, we&apos;ve sent a 6-digit reset code.
             </p>
             <Link
+              href={`/reset-password?email=${encodeURIComponent(email)}`}
+              className="mt-3 inline-block rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
+              Enter code
+            </Link>
+            <Link
               href="/login"
-              className="mt-3 inline-block text-sm font-medium text-blue-600 hover:underline"
+              className="mt-3 ml-3 inline-block text-sm font-medium text-blue-600 hover:underline"
             >
               Back to login
             </Link>
@@ -79,7 +85,7 @@ export default function ForgotPasswordPage() {
               className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-              Send reset link
+              Send reset code
             </button>
 
             <p className="text-center text-sm text-gray-500">

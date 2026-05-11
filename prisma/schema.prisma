@@ -49,6 +49,14 @@ model User {
   phone        String?
   role         UserRole   @default(CUSTOMER)
   status       UserStatus @default(ACTIVE)
+  emailVerifiedAt           DateTime?
+  verificationCode          String?
+  verificationCodeExpiresAt DateTime?
+  verificationCodeSentAt    DateTime?
+  resetCode                 String?
+  resetCodeExpiresAt        DateTime?
+  resetCodeSentAt           DateTime?
+  pushToken                 String?
   hourlyRate   Float?
   bio          String?
   address      String?
@@ -66,6 +74,8 @@ model User {
   activityLogs         ActivityLog[]     @relation("ActivityActor")
   notifications        Notification[]
   invoices             Invoice[]         @relation("InvoiceCustomer")
+  timesheets           Timesheet[]
+  expenses             Expense[]
 
   @@map("users")
 }
@@ -153,6 +163,8 @@ model WorkOrder {
   resolutionNotes  String?
   cancelledAt      DateTime?
   cancelledReason  String?
+  customerSignaturePath String?
+  customerSignatureAt   DateTime?
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
 
@@ -163,6 +175,8 @@ model WorkOrder {
   photos     WorkOrderPhoto[]
   logs       ActivityLog[]
   invoices   Invoice[]
+  timesheets Timesheet[]
+  expenses   Expense[]
 
   @@map("work_orders")
 }
@@ -269,4 +283,39 @@ model InvoiceLineItem {
   invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 
   @@map("invoice_line_items")
+}
+
+model Timesheet {
+  id           String     @id @default(cuid())
+  userId       String
+  workOrderId  String?
+  date         DateTime
+  hoursWorked  Float
+  notes        String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workOrder WorkOrder? @relation(fields: [workOrderId], references: [id])
+
+  @@index([userId, date])
+  @@map("timesheets")
+}
+
+model Expense {
+  id           String     @id @default(cuid())
+  userId       String
+  workOrderId  String?
+  date         DateTime
+  description  String
+  amount       Float
+  receiptPath  String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workOrder WorkOrder? @relation(fields: [workOrderId], references: [id])
+
+  @@index([userId, date])
+  @@map("expenses")
 }

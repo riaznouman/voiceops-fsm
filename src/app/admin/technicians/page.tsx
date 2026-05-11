@@ -60,6 +60,7 @@ export default function TechniciansPage() {
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
+            aria-label="Search technicians by name or email"
             placeholder="Search by name or email…"
             value={q}
             onChange={(e) => setQ(e.target.value)}
@@ -70,7 +71,8 @@ export default function TechniciansPage() {
         <button
           type="button"
           onClick={handleSearch}
-          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          disabled={loading}
+          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
         >
           Search
         </button>
@@ -82,7 +84,10 @@ export default function TechniciansPage() {
         </div>
       )}
 
-      <section className="mb-4 overflow-hidden rounded-md border border-gray-300 bg-white">
+      <section
+        aria-busy={loading}
+        className="mb-4 overflow-hidden rounded-md border border-gray-300 bg-white"
+      >
         <table className="w-full border-collapse">
           <thead className="bg-gray-50">
             <tr>
@@ -94,8 +99,8 @@ export default function TechniciansPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={5} className="py-12 text-center">
-                  <LoaderCircle className="mx-auto h-6 w-6 animate-spin text-blue-600" />
+                <td colSpan={5} className="py-12 text-center" role="status" aria-label="Loading technicians">
+                  <LoaderCircle className="mx-auto h-6 w-6 animate-spin text-blue-600" aria-hidden="true" />
                 </td>
               </tr>
             ) : technicians.length === 0 ? (

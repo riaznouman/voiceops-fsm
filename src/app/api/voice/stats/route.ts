@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
   ).length;
 
   return NextResponse.json({
-    totalCallsToday,
+    callsToday: totalCallsToday,
     successRate: Math.round(successRate * 100) / 100,
     avgDurationSec,
     abandonedCount,

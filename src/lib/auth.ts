@@ -35,6 +35,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
+        if (!user.emailVerifiedAt) {
+          // Login page detects this via /api/auth/needs-verification and routes to /verify-email
+          return null;
+        }
+
         return {
           id: user.id,
           name: user.name,

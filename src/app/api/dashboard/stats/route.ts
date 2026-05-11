@@ -57,6 +57,36 @@ export async function GET(request: NextRequest) {
     }),
   ]);
 
+  const recentActivityFormatted = recentActivity.map((log) => {
+    const actor = log.actor?.name ?? "Someone";
+    const ref = log.workOrder?.referenceNumber ?? "a work order";
+    let message: string;
+    let type: string;
+    switch (log.action) {
+      case "STATUS_CHANGE":
+        type = "STATUS_CHANGE";
+        message = `${actor} changed ${ref} from ${log.fromValue ?? "?"} to ${log.toValue ?? "?"}`;
+        break;
+      case "ASSIGNED":
+        type = "ASSIGNMENT";
+        message = `${actor} assigned ${ref} to a technician`;
+        break;
+      case "NOTE":
+        type = "NOTE";
+        message = `${actor} added a note on ${ref}`;
+        break;
+      default:
+        type = log.action;
+        message = `${actor} · ${log.action.replace(/_/g, " ").toLowerCase()} on ${ref}`;
+    }
+    return {
+      id: log.id,
+      type,
+      message,
+      createdAt: log.createdAt,
+    };
+  });
+
   return NextResponse.json({
     totalWorkOrders,
     byStatus: {
@@ -70,6 +100,6 @@ export async function GET(request: NextRequest) {
     todayJobs,
     activeTechnicians,
     unassignedJobs,
-    recentActivity,
+    recentActivity: recentActivityFormatted,
   });
 }

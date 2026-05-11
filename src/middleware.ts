@@ -8,9 +8,12 @@ const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { pathname, search } = req.nextUrl;
-  const isAdminRoute = pathname.startsWith("/admin");
 
-  if (!isAdminRoute) {
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isCustomerRoute = pathname.startsWith("/customer");
+  const isTechnicianRoute = pathname.startsWith("/technician");
+
+  if (!isAdminRoute && !isCustomerRoute && !isTechnicianRoute) {
     return NextResponse.next();
   }
 
@@ -22,7 +25,21 @@ export default auth((req) => {
     return NextResponse.redirect(loginUrl);
   }
 
-  if (!ADMIN_ROLES.includes(session.user.role)) {
+  const role = session.user.role;
+
+  if (isAdminRoute && !ADMIN_ROLES.includes(role)) {
+    const homeUrl = new URL("/", req.url);
+    homeUrl.searchParams.set("error", "not_authorized");
+    return NextResponse.redirect(homeUrl);
+  }
+
+  if (isCustomerRoute && role !== "CUSTOMER") {
+    const homeUrl = new URL("/", req.url);
+    homeUrl.searchParams.set("error", "not_authorized");
+    return NextResponse.redirect(homeUrl);
+  }
+
+  if (isTechnicianRoute && role !== "TECHNICIAN") {
     const homeUrl = new URL("/", req.url);
     homeUrl.searchParams.set("error", "not_authorized");
     return NextResponse.redirect(homeUrl);
@@ -32,5 +49,5 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/customer/:path*", "/technician/:path*"],
 };

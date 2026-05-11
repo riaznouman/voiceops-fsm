@@ -7,12 +7,18 @@ export async function GET(request: NextRequest) {
   try {
     user = await getCurrentUser(request);
   } catch (err: unknown) {
-    const e = err as { status: number; message: string };
-    return NextResponse.json({ error: e.message }, { status: e.status });
+    const e = err as { status?: number; message?: string };
+    return NextResponse.json(
+      { error: e.message ?? "Authentication required" },
+      { status: e.status ?? 401 }
+    );
   }
 
   if (!["ADMIN", "MANAGER"].includes(user.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json(
+      { error: "Only admins and managers can view dashboard stats" },
+      { status: 403 }
+    );
   }
 
   const todayStart = new Date();

@@ -40,7 +40,11 @@ export default function ForgotPasswordPage() {
         </div>
 
         {submitted ? (
-          <div className="rounded-md border border-green-200 bg-green-50 px-4 py-4 text-sm text-green-700">
+          <div
+            role="status"
+            aria-live="polite"
+            className="rounded-md border border-green-200 bg-green-50 px-4 py-4 text-sm text-green-700"
+          >
             <p className="font-medium">Check your inbox</p>
             <p className="mt-1 text-green-600">
               If that email is registered, we&apos;ve sent a 6-digit reset code.
@@ -73,19 +77,25 @@ export default function ForgotPasswordPage() {
                 placeholder="email@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                aria-invalid={Boolean(error)}
+                aria-describedby={error ? "forgot-error" : undefined}
                 className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none"
               />
             </div>
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && (
+              <p id="forgot-error" role="alert" aria-live="polite" className="text-sm text-red-600">
+                {error}
+              </p>
+            )}
 
             <button
               type="submit"
               disabled={processing}
               className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-              Send reset code
+              {processing && <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />}
+              {processing ? "Sending…" : "Send reset code"}
             </button>
 
             <p className="text-center text-sm text-gray-500">

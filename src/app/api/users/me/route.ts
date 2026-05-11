@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { extractToken } from "@/lib/auth-guard";
+import { getCurrentUser } from "@/lib/auth-guard";
 
 const PHONE_REGEX = /^[0-9+\-\s()]+$/;
 
 export async function GET(request: NextRequest) {
-  let payload;
+  let me;
   try {
-    payload = extractToken(request);
+    me = await getCurrentUser(request);
   } catch (err: unknown) {
     const e = err as { status: number; message: string };
     return NextResponse.json({ error: e.message }, { status: e.status });
   }
 
   const user = await prisma.user.findUnique({
-    where: { id: payload.sub },
+    where: { id: me.userId },
     select: {
       id: true,
       name: true,
@@ -37,9 +37,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
-  let payload;
+  let me;
   try {
-    payload = extractToken(request);
+    me = await getCurrentUser(request);
   } catch (err: unknown) {
     const e = err as { status: number; message: string };
     return NextResponse.json({ error: e.message }, { status: e.status });
@@ -80,7 +80,7 @@ export async function PATCH(request: NextRequest) {
   }
 
   const updated = await prisma.user.update({
-    where: { id: payload.sub },
+    where: { id: me.userId },
     data,
     select: {
       id: true,

@@ -47,35 +47,28 @@ function ActivityIcon({ type }: { type: string }) {
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [callsToday, setCallsToday] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // fetch("/api/dashboard/stats")
-    //   .then((r) => {
-    //     if (!r.ok) throw new Error("Failed to load stats");
-    //     return r.json();
-    //   })
-    //   .then(setStats)
-    //   .catch(() => setError("Could not load dashboard data."))
-    //   .finally(() => setLoading(false));
-
-    setStats({
-      totalWorkOrders: 0,
-      byStatus: {
-        PENDING: 0,
-        EN_ROUTE: 0,
-        ON_SITE: 0,
-        IN_PROGRESS: 0,
-        COMPLETED: 0,
-        CANCELLED: 0,
-      },
-      todayJobs: 0,
-      activeTechnicians: 0,
-      unassignedJobs: 0,
-      recentActivity: [],
-    });
-    setLoading(false);
+    Promise.all([
+      fetch("/api/dashboard/stats").then((r) => {
+        if (!r.ok) throw new Error("stats");
+        return r.json();
+      }),
+      fetch("/api/voice/stats")
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null),
+    ])
+      .then(([s, voice]) => {
+        setStats(s);
+        if (voice && typeof voice.callsToday === "number") {
+          setCallsToday(voice.callsToday);
+        }
+      })
+      .catch(() => setError("Could not load dashboard data."))
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading) {
@@ -172,7 +165,7 @@ export default function DashboardPage() {
         />
         <StatCard
           label="Calls Today"
-          value={0}
+          value={callsToday}
           icon={<Phone size={18} />}
           href="/admin/calls"
         />

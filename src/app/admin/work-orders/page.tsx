@@ -7,6 +7,7 @@ import { LoaderCircle, Plus } from "lucide-react";
 import JobPriorityBadge from "@/components/admin/work-orders/JobPriorityBadge";
 import JobStatusBadge from "@/components/admin/work-orders/JobStatusBadge";
 import JobTableFilters from "@/components/admin/work-orders/JobTableFilters";
+import TechnicianAssignSelect from "@/components/admin/work-orders/TechnicianAssignSelect";
 // TODO: uncomment before submit
 // import Pagination from "@/components/ui/Pagination";
 import type { WorkOrderStatus, WorkOrderPriority } from "@/lib/types";
@@ -33,6 +34,14 @@ function WorkOrdersContent() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [technicians, setTechnicians] = useState<Array<{ id: string; name: string }>>([]);
+
+  useEffect(() => {
+    fetch("/api/users?role=TECHNICIAN&pageSize=200")
+      .then((r) => (r.ok ? r.json() : { data: [] }))
+      .then((d) => setTechnicians((d.data ?? []).map((t: { id: string; name: string }) => ({ id: t.id, name: t.name }))))
+      .catch(() => {});
+  }, []);
 
   const load = useCallback(
     (p: number, status: string, q: string) => {
@@ -142,9 +151,20 @@ function WorkOrdersContent() {
                     <JobPriorityBadge priority={wo.priority} />
                   </td>
                   <td className={bodyCellClass}>
-                    {wo.technician?.name ?? (
-                      <span className="text-gray-400">Unassigned</span>
-                    )}
+                    <TechnicianAssignSelect
+                      workOrderId={wo.id}
+                      currentTechnicianId={wo.technician?.id ?? null}
+                      technicians={technicians}
+                      onAssigned={(techId, techName) => {
+                        setWorkOrders((prev) =>
+                          prev.map((w) =>
+                            w.id === wo.id
+                              ? { ...w, technician: techId ? { id: techId, name: techName ?? "" } : null }
+                              : w
+                          )
+                        );
+                      }}
+                    />
                   </td>
                   <td className={`${bodyCellClass} text-right`}>
                     <div className="flex justify-end gap-1.5">

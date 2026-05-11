@@ -1,20 +1,34 @@
-import { PAGE_NAVIGATOR } from "@/utls/navigator";
 import Link from "next/link";
+import { auth } from "@/lib/auth";
+import HeaderAuth from "@/components/header-auth";
 
+function dashboardHrefForRole(role?: string | null) {
+  switch (role) {
+    case "ADMIN":
+    case "MANAGER":
+      return "/admin/dashboard";
+    case "TECHNICIAN":
+      return "/technician/dashboard";
+    case "CUSTOMER":
+      return "/customer/dashboard";
+    default:
+      return null;
+  }
+}
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+  const dashboardHref = dashboardHrefForRole(session?.user?.role);
+  const heroHref = !session?.user ? "/login" : dashboardHref ?? "/";
+  const heroLabel = !session?.user ? "Get Started" : "Open Dashboard";
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
           <h1 className="text-xl font-bold text-gray-900">VoiceOps</h1>
-          <Link
-            href={PAGE_NAVIGATOR.LOGIN}
-            className="bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700"
-          >
-            Sign In
-          </Link>
+          <HeaderAuth />
         </div>
       </header>
 
@@ -31,10 +45,10 @@ export default function Home() {
           </p>
           <div className="flex gap-4 justify-center">
             <Link
-              href="/login"
+              href={heroHref}
               className="bg-blue-600 text-white px-6 py-3 rounded text-sm font-medium hover:bg-blue-700"
             >
-              Get Started
+              {heroLabel}
             </Link>
             <a
               href="#features"

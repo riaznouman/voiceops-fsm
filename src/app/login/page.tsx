@@ -3,14 +3,30 @@
 import { Suspense, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { LoaderCircle } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/admin/dashboard";
+  const callbackUrl = searchParams.get("callbackUrl");
   const registered = searchParams.get("registered") === "1";
+  const verified = searchParams.get("verified") === "1";
+  const reset = searchParams.get("reset") === "1";
+
+  function defaultLandingForRole(role?: string | null) {
+    switch (role) {
+      case "ADMIN":
+      case "MANAGER":
+        return "/admin/dashboard";
+      case "TECHNICIAN":
+        return "/technician/dashboard";
+      case "CUSTOMER":
+        return "/customer/dashboard";
+      default:
+        return "/";
+    }
+  }
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,16 +43,35 @@ function LoginForm() {
       email,
       password,
       redirect: false,
-      callbackUrl,
     });
 
     if (res?.error) {
+      console.debug("[login] signIn error", res);
+      // Distinguish "wrong password" from "email not yet verified"
+      try {
+        const check = await fetch("/api/auth/needs-verification", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+        const data = await check.json();
+        if (data.needsVerification) {
+          router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+          return;
+        }
+      } catch (e) {
+        console.debug("[login] needs-verification probe failed", e);
+      }
       setErrorMessage("Invalid email or password");
       setProcessing(false);
       return;
     }
 
-    router.push(callbackUrl);
+    const session = await getSession();
+    const role = session?.user?.role;
+    const target = callbackUrl ?? defaultLandingForRole(role);
+    console.debug("[login] success", { role, target });
+    router.push(target);
   }
 
   return (
@@ -44,7 +79,17 @@ function LoginForm() {
       <div className="w-full max-w-[400px] rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
         {registered && (
           <div className="mb-4 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-            Account created! You can now log in.
+            Account created! Check your email for the verification code.
+          </div>
+        )}
+        {verified && (
+          <div className="mb-4 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+            Email verified. You can now log in.
+          </div>
+        )}
+        {reset && (
+          <div className="mb-4 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+            Password updated. Log in with your new password.
           </div>
         )}
 

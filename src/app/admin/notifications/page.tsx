@@ -19,17 +19,29 @@ export default function NotificationsPage() {
 
   function load() {
     setLoading(true);
+    setError("");
     fetch("/api/notifications?pageSize=50")
-      .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
+      .then(async (r) => {
+        if (!r.ok) {
+          const body = await r.json().catch(() => ({}));
+          throw new Error(body.error ?? "Failed to load notifications.");
+        }
+        return r.json();
+      })
       .then((d) => setNotifications(d.data ?? d ?? []))
-      .catch(() => setError("Failed to load notifications."))
+      .catch((e: Error) => setError(e.message || "Failed to load notifications."))
       .finally(() => setLoading(false));
   }
 
   useEffect(() => { load(); }, []);
 
   async function markRead(id: string) {
-    await fetch(`/api/notifications/${id}/read`, { method: "PATCH" });
+    const res = await fetch(`/api/notifications/${id}/read`, { method: "PATCH" });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      setError(body.error ?? "Failed to mark notification as read.");
+      return;
+    }
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true } : n))
     );
@@ -38,7 +50,12 @@ export default function NotificationsPage() {
   async function markAllRead() {
     setMarkingAll(true);
     try {
-      await fetch("/api/notifications/read-all", { method: "POST" });
+      const res = await fetch("/api/notifications/read-all", { method: "POST" });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        setError(body.error ?? "Failed to mark all as read.");
+        return;
+      }
       setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
     } finally {
       setMarkingAll(false);

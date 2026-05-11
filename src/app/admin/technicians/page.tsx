@@ -36,9 +36,15 @@ export default function TechniciansPage() {
     const params = new URLSearchParams({ role: "TECHNICIAN", page: String(p), pageSize: "20" });
     if (s) params.set("q", s);
     fetch(`/api/users?${params}`)
-      .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
+      .then(async (r) => {
+        if (!r.ok) {
+          const body = await r.json().catch(() => ({}));
+          throw new Error(body.error ?? "Failed to load technicians.");
+        }
+        return r.json();
+      })
       .then((d) => { setTechnicians(d.data ?? []); setTotal(d.total ?? 0); })
-      .catch(() => setError("Failed to load technicians."))
+      .catch((e: Error) => setError(e.message || "Failed to load technicians."))
       .finally(() => setLoading(false));
   }, []);
 

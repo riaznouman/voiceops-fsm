@@ -36,12 +36,15 @@ export default function CustomersPage() {
       const params = new URLSearchParams({ role: "CUSTOMER", page: String(p), pageSize: "20" });
       if (s) params.set("q", s);
       fetch(`/api/users?${params}`)
-        .then((r) => {
-          if (!r.ok) throw new Error();
+        .then(async (r) => {
+          if (!r.ok) {
+            const body = await r.json().catch(() => ({}));
+            throw new Error(body.error ?? "Failed to load customers.");
+          }
           return r.json();
         })
         .then((d) => { setCustomers(d.data ?? []); setTotal(d.total ?? 0); })
-        .catch(() => setError("Failed to load customers."))
+        .catch((e: Error) => setError(e.message || "Failed to load customers."))
         .finally(() => setLoading(false));
     },
     []

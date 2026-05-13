@@ -5,8 +5,11 @@ import { createWithRef } from "@/lib/ref-number";
 import type { Prisma } from "@prisma/client";
 
 export async function check_availability(date: string, serviceType: string) {
+  console.log("[VAPI:tool] check_availability →", { date, serviceType });
+
   const baseDate = new Date(date);
   if (isNaN(baseDate.getTime())) {
+    console.warn("[VAPI:tool] check_availability invalid date", date);
     return { error: "Invalid date" };
   }
 
@@ -18,6 +21,13 @@ export async function check_availability(date: string, serviceType: string) {
     });
     if (service) {
       requiredSkillIds = service.serviceSkills.map((s) => s.skillId);
+      console.log("[VAPI:tool] check_availability matched service", {
+        id: service.id,
+        name: service.name,
+        requiredSkillIds,
+      });
+    } else {
+      console.log("[VAPI:tool] check_availability no service matched for", serviceType);
     }
   }
 
@@ -64,6 +74,7 @@ export async function check_availability(date: string, serviceType: string) {
     }
   }
 
+  console.log("[VAPI:tool] check_availability ← slots:", slots);
   return { availableSlots: slots };
 }
 
@@ -74,6 +85,14 @@ export async function create_booking(
   scheduledAt: string,
   address: string
 ) {
+  console.log("[VAPI:tool] create_booking →", {
+    customerName,
+    customerPhone,
+    serviceId,
+    scheduledAt,
+    address,
+  });
+
   const normalizedPhone = customerPhone.replace(/\D/g, "");
   const tempEmail = `${normalizedPhone}@voiceops.local`;
 
@@ -82,6 +101,7 @@ export async function create_booking(
   });
 
   if (!customer) {
+    console.log("[VAPI:tool] create_booking creating new customer", { name: customerName, phone: customerPhone });
     const { hash } = await import("bcryptjs");
     const tempPassword = await hash(Math.random().toString(36).slice(2), 10);
     customer = await prisma.user.create({
@@ -93,6 +113,8 @@ export async function create_booking(
         role: "CUSTOMER",
       },
     });
+  } else {
+    console.log("[VAPI:tool] create_booking found existing customer", { id: customer.id, name: customer.name });
   }
 
   let suggestedTechnicianId: string | null = null;
@@ -117,6 +139,12 @@ export async function create_booking(
         break;
       }
     }
+    console.log("[VAPI:tool] create_booking technician match", {
+      serviceId,
+      requiredSkillIds,
+      candidateCount: techs.length,
+      suggestedTechnicianId,
+    });
   }
 
   const workOrder = await createWithRef(
@@ -137,6 +165,11 @@ export async function create_booking(
       })
   );
 
+  console.log("[VAPI:tool] create_booking work order created", {
+    id: workOrder.id,
+    ref: workOrder.referenceNumber,
+  });
+
   await logActivity(workOrder.id, customer.id, "CREATED", undefined, "PENDING", "Booked via voice");
   if (suggestedTechnicianId) {
     await logActivity(workOrder.id, customer.id, "ASSIGNED", undefined, suggestedTechnicianId, "Auto-assigned via voice");
@@ -151,15 +184,24 @@ export async function create_booking(
       `Work order ${workOrder.referenceNumber} created for ${customerName}`,
       `/admin/work-orders/${workOrder.id}`
     );
+    console.log("[VAPI:tool] create_booking notified manager", manager.id);
   }
 
-  return { referenceNumber: workOrder.referenceNumber, workOrderId: workOrder.id, suggestedTechnicianId };
+  const result = {
+    referenceNumber: workOrder.referenceNumber,
+    workOrderId: workOrder.id,
+    suggestedTechnicianId,
+  };
+  console.log("[VAPI:tool] create_booking ←", result);
+  return result;
 }
 
 export async function get_customer(phone: string) {
+  console.log("[VAPI:tool] get_customer →", { phone });
   const customer = await prisma.user.findFirst({
     where: { phone, role: "CUSTOMER" },
     select: { id: true, name: true, phone: true, email: true },
   });
+  console.log("[VAPI:tool] get_customer ←", customer ?? "not found");
   return customer ?? null;
 }

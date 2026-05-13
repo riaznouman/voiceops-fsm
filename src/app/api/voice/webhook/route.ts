@@ -104,13 +104,13 @@ export async function POST(request: NextRequest) {
       const startedAt = call?.startedAt
         ? new Date(call.startedAt as string)
         : new Date();
-      const existing = await prisma.callSession.findUnique({ where: { id: callId } });
-      if (!existing) {
-        await prisma.callSession.create({
-          data: { id: callId, fromNumber, startedAt },
-        });
-        console.log("[VAPI]", reqId, "call session created");
-      }
+      // Upsert so we don't depend on the start event arriving first.
+      await prisma.callSession.upsert({
+        where: { id: callId },
+        create: { id: callId, fromNumber, startedAt },
+        update: { fromNumber, startedAt },
+      });
+      console.log("[VAPI]", reqId, "call session upserted on start");
     }
     return NextResponse.json({ status: "ok" });
   }
@@ -119,24 +119,29 @@ export async function POST(request: NextRequest) {
   if (type === "end-of-call-report" || type === "call.ended" || type === "hang") {
     if (callId) {
       const endedAt = call?.endedAt ? new Date(call.endedAt as string) : new Date();
+      // Vapi sometimes sends durationSeconds as a number, sometimes as a string.
+      // Explicit Number() coercion handles both.
       const rawDuration =
-        (message.durationSeconds as number) ??
-        (message.duration as number) ??
-        (call?.duration as number);
-      const durationSec = typeof rawDuration === "number" ? Math.round(rawDuration) : null;
+        (message.durationSeconds as number | string | undefined) ??
+        (message.duration as number | string | undefined) ??
+        (call?.duration as number | string | undefined);
+      const parsedDuration =
+        rawDuration !== undefined && rawDuration !== null
+          ? Number(rawDuration)
+          : NaN;
+      const durationSec = Number.isFinite(parsedDuration) ? Math.round(parsedDuration) : null;
       const summary =
         (message.summary as string) ??
         (call?.summary as string) ??
         null;
 
-      const existing = await prisma.callSession.findUnique({ where: { id: callId } });
-      if (existing) {
-        await prisma.callSession.update({
-          where: { id: callId },
-          data: { endedAt, durationSec, summary },
-        });
-        console.log("[VAPI]", reqId, "call session closed", { durationSec });
-      }
+      // Upsert so the end-of-call data is saved even if we missed the start.
+      await prisma.callSession.upsert({
+        where: { id: callId },
+        create: { id: callId, endedAt, durationSec, summary, startedAt: endedAt },
+        update: { endedAt, durationSec, summary },
+      });
+      console.log("[VAPI]", reqId, "call session closed", { durationSec, hasSummary: !!summary });
     }
     return NextResponse.json({ status: "ok" });
   }
@@ -195,7 +200,8 @@ export async function POST(request: NextRequest) {
             parameters.customerPhone as string,
             parameters.serviceId as string,
             parameters.scheduledAt as string,
-            parameters.address as string
+            parameters.address as string,
+            (parameters.customerId as string | undefined) ?? null
           );
         } else if (toolName === "get_customer") {
           result = await get_customer(parameters.phone as string);

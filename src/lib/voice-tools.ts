@@ -15,10 +15,21 @@ export async function check_availability(date: string, serviceType: string) {
 
   let requiredSkillIds: string[] = [];
   if (serviceType) {
-    const service = await prisma.service.findFirst({
-      where: { OR: [{ id: serviceType }, { slug: serviceType }, { name: serviceType }] },
-      include: { serviceSkills: { select: { skillId: true } } },
-    });
+    const service =
+      (await prisma.service.findFirst({
+        where: {
+          OR: [
+            { id: serviceType },
+            { slug: serviceType },
+            { name: { equals: serviceType, mode: "insensitive" } },
+          ],
+        },
+        include: { serviceSkills: { select: { skillId: true } } },
+      })) ??
+      (await prisma.service.findFirst({
+        where: { name: { contains: serviceType, mode: "insensitive" } },
+        include: { serviceSkills: { select: { skillId: true } } },
+      }));
     if (service) {
       requiredSkillIds = service.serviceSkills.map((s) => s.skillId);
       console.log("[VAPI:tool] check_availability matched service", {
@@ -83,7 +94,8 @@ export async function create_booking(
   customerPhone: string,
   serviceId: string,
   scheduledAt: string,
-  address: string
+  address: string,
+  customerId?: string | null
 ) {
   console.log("[VAPI:tool] create_booking →", {
     customerName,
@@ -91,21 +103,26 @@ export async function create_booking(
     serviceId,
     scheduledAt,
     address,
+    customerId,
   });
 
-  // The AI usually passes a service NAME (e.g. "plumbing"), not a UUID.
-  // Resolve it to a real service record before writing.
+  // Service: AI usually passes a name like "plumbing", not a UUID. Try id, slug,
+  // exact name, then a fuzzy `contains` match so partial names still attach.
   let resolvedServiceId: string | null = null;
   if (serviceId) {
-    const service = await prisma.service.findFirst({
-      where: {
-        OR: [
-          { id: serviceId },
-          { slug: serviceId },
-          { name: { equals: serviceId, mode: "insensitive" } },
-        ],
-      },
-    });
+    const service =
+      (await prisma.service.findFirst({
+        where: {
+          OR: [
+            { id: serviceId },
+            { slug: serviceId },
+            { name: { equals: serviceId, mode: "insensitive" } },
+          ],
+        },
+      })) ??
+      (await prisma.service.findFirst({
+        where: { name: { contains: serviceId, mode: "insensitive" } },
+      }));
     if (service) {
       resolvedServiceId = service.id;
       console.log("[VAPI:tool] create_booking resolved service", {
@@ -118,14 +135,36 @@ export async function create_booking(
     }
   }
 
-  const normalizedPhone = customerPhone.replace(/\D/g, "");
-  const tempEmail = `${normalizedPhone}@voiceops.local`;
+  // Customer: if we already know who the caller is (web-call user passed their
+  // own id), use that account directly. Otherwise fall back to phone lookup,
+  // then create a new customer as a last resort.
+  let customer = null;
+  if (customerId) {
+    customer = await prisma.user.findFirst({
+      where: { id: customerId, role: "CUSTOMER" },
+    });
+    if (customer) {
+      console.log("[VAPI:tool] create_booking matched known customerId", {
+        id: customer.id,
+        name: customer.name,
+      });
+    } else {
+      console.warn("[VAPI:tool] create_booking customerId not found, falling back to phone lookup", customerId);
+    }
+  }
 
-  let customer = await prisma.user.findFirst({
-    where: { phone: customerPhone, role: "CUSTOMER" },
-  });
+  if (!customer && customerPhone) {
+    customer = await prisma.user.findFirst({
+      where: { phone: customerPhone, role: "CUSTOMER" },
+    });
+    if (customer) {
+      console.log("[VAPI:tool] create_booking matched by phone", { id: customer.id, name: customer.name });
+    }
+  }
 
   if (!customer) {
+    const normalizedPhone = customerPhone.replace(/\D/g, "");
+    const tempEmail = `${normalizedPhone}@voiceops.local`;
     console.log("[VAPI:tool] create_booking creating new customer", { name: customerName, phone: customerPhone });
     const { hash } = await import("bcryptjs");
     const tempPassword = await hash(Math.random().toString(36).slice(2), 10);
@@ -138,8 +177,6 @@ export async function create_booking(
         role: "CUSTOMER",
       },
     });
-  } else {
-    console.log("[VAPI:tool] create_booking found existing customer", { id: customer.id, name: customer.name });
   }
 
   let suggestedTechnicianId: string | null = null;

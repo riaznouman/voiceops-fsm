@@ -1,23 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createHmac } from "crypto";
 import { prisma } from "@/lib/prisma";
 import { check_availability, create_booking, get_customer } from "@/lib/voice-tools";
 
-async function verifySignature(rawBody: string, signature: string): Promise<boolean> {
-  const secret = process.env.VAPI_WEBHOOK_SECRET;
-  if (!secret) return false;
-  const computed = createHmac("sha256", secret).update(rawBody).digest("hex");
-  return computed === signature;
+function verifyBearerToken(request: NextRequest): boolean {
+  const token = process.env.VAPI_WEBHOOK_TOKEN;
+  if (!token) return false;
+  const header = request.headers.get("authorization") ?? "";
+  const match = header.match(/^Bearer\s+(.+)$/i);
+  if (!match) return false;
+  return match[1].trim() === token;
 }
 
 export async function POST(request: NextRequest) {
   const rawBody = await request.text();
 
   if (process.env.NODE_ENV !== "development") {
-    const signature = request.headers.get("x-vapi-signature") ?? "";
-    const valid = await verifySignature(rawBody, signature);
-    if (!valid) {
-      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+    if (!verifyBearerToken(request)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
   }
 

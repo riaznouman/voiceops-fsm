@@ -7,6 +7,8 @@ type CallState = "idle" | "connecting" | "active" | "ended";
 
 interface VoiceCallButtonProps {
   customerName?: string;
+  customerId?: string;
+  customerPhone?: string | null;
 }
 
 interface VapiInstance {
@@ -15,7 +17,7 @@ interface VapiInstance {
   on: (event: string, handler: (data?: unknown) => void) => void;
 }
 
-export default function VoiceCallButton({ customerName }: VoiceCallButtonProps) {
+export default function VoiceCallButton({ customerName, customerId, customerPhone }: VoiceCallButtonProps) {
   const [state, setState] = useState<CallState>("idle");
   const [error, setError] = useState<string | null>(null);
   const vapiRef = useRef<VapiInstance | null>(null);
@@ -72,9 +74,12 @@ export default function VoiceCallButton({ customerName }: VoiceCallButtonProps) 
         setState("idle");
       });
 
-      const startOptions = customerName
-        ? { variableValues: { customerName } }
-        : undefined;
+      const variableValues: Record<string, unknown> = {};
+      if (customerName) variableValues.customerName = customerName;
+      if (customerId) variableValues.customerId = customerId;
+      if (customerPhone) variableValues.customerPhone = customerPhone;
+      const startOptions =
+        Object.keys(variableValues).length > 0 ? { variableValues } : undefined;
       await vapi.start(assistantId, startOptions);
     } catch (err) {
       console.error("[VAPI:web] start failed", err);

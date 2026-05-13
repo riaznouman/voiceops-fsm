@@ -2,7 +2,10 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import VoiceCallButton from "@/components/customer/VoiceCallButton";
+// Voice call button is temporarily disabled on production so the public dashboard
+// cannot burn through our Vapi free credit. Re-enable by uncommenting the import
+// AND the <VoiceCallButton .../> tag below.
+// import VoiceCallButton from "@/components/customer/VoiceCallButton";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +29,7 @@ export default async function CustomerDashboardPage() {
   const [user, workOrders, unreadCount] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
-      select: { name: true },
+      select: { name: true, phone: true },
     }),
     prisma.workOrder.findMany({
       where: { customerId: userId },
@@ -61,7 +64,17 @@ export default async function CustomerDashboardPage() {
         </p>
       </div>
 
-      <VoiceCallButton customerName={user.name ?? undefined} />
+      {/*
+        Voice call button disabled on production to protect Vapi free credit.
+        Uncomment this block (and the import at the top of the file) to put the
+        web-based "Call agent" button back on the customer dashboard.
+
+        <VoiceCallButton
+          customerName={user.name ?? undefined}
+          customerId={userId}
+          customerPhone={user.phone ?? undefined}
+        />
+      */}
 
       <section className="rounded-lg border border-gray-200 bg-white p-6">
         <div className="mb-4 flex items-center justify-between">

@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { compare, hash } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { rateLimit, clientKey } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  const ip = clientKey(request);
+  const rl = rateLimit(`reset:${ip}`, 100, 10 * 60_000);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Too many attempts. Please try again later." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } }
+    );
+  }
+
   const { email, code, password } = await request.json();
 
   if (!email || !code || !password) {

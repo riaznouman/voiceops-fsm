@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { sendPasswordResetCodeEmail } from "@/lib/mailer";
+import { rateLimit, clientKey } from "@/lib/rate-limit";
 
 const CODE_TTL_MS = 15 * 60 * 1000;
 const RESEND_COOLDOWN_MS = 60 * 1000;
@@ -11,6 +12,15 @@ function generateCode() {
 }
 
 export async function POST(request: NextRequest) {
+  const ip = clientKey(request);
+  const rl = rateLimit(`forgot:${ip}`, 50, 10 * 60_000);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } }
+    );
+  }
+
   const { email } = await request.json();
 
   if (!email) {

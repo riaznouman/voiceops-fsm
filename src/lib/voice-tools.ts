@@ -93,6 +93,31 @@ export async function create_booking(
     address,
   });
 
+  // The AI usually passes a service NAME (e.g. "plumbing"), not a UUID.
+  // Resolve it to a real service record before writing.
+  let resolvedServiceId: string | null = null;
+  if (serviceId) {
+    const service = await prisma.service.findFirst({
+      where: {
+        OR: [
+          { id: serviceId },
+          { slug: serviceId },
+          { name: { equals: serviceId, mode: "insensitive" } },
+        ],
+      },
+    });
+    if (service) {
+      resolvedServiceId = service.id;
+      console.log("[VAPI:tool] create_booking resolved service", {
+        input: serviceId,
+        id: service.id,
+        name: service.name,
+      });
+    } else {
+      console.warn("[VAPI:tool] create_booking no service matched for", serviceId);
+    }
+  }
+
   const normalizedPhone = customerPhone.replace(/\D/g, "");
   const tempEmail = `${normalizedPhone}@voiceops.local`;
 
@@ -119,9 +144,9 @@ export async function create_booking(
 
   let suggestedTechnicianId: string | null = null;
 
-  if (serviceId) {
+  if (resolvedServiceId) {
     const serviceSkills = await prisma.serviceSkill.findMany({
-      where: { serviceId },
+      where: { serviceId: resolvedServiceId },
       select: { skillId: true },
     });
     const requiredSkillIds = serviceSkills.map((s) => s.skillId);
@@ -140,7 +165,7 @@ export async function create_booking(
       }
     }
     console.log("[VAPI:tool] create_booking technician match", {
-      serviceId,
+      serviceId: resolvedServiceId,
       requiredSkillIds,
       candidateCount: techs.length,
       suggestedTechnicianId,
@@ -155,7 +180,7 @@ export async function create_booking(
         data: {
           referenceNumber,
           customerId: customer.id,
-          serviceId: serviceId || null,
+          serviceId: resolvedServiceId,
           technicianId: suggestedTechnicianId,
           scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
           address,

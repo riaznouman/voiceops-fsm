@@ -93,11 +93,14 @@ export async function POST(request: NextRequest) {
     const isStart = type === "call.started" || status === "in-progress";
     if (isStart && callId) {
       const customer = message.customer as Record<string, unknown> | undefined;
+      const callCustomer = call?.customer as Record<string, unknown> | undefined;
+      const callType = (call?.type as string) ?? "";
+      const isWebCall = callType.toLowerCase().includes("web");
       const fromNumber =
         (customer?.number as string) ??
+        (callCustomer?.number as string) ??
         (call?.from as string) ??
-        (call?.customer as Record<string, unknown> | undefined)?.number as string ??
-        null;
+        (isWebCall ? "Web Test" : null);
       const startedAt = call?.startedAt
         ? new Date(call.startedAt as string)
         : new Date();

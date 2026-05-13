@@ -46,7 +46,6 @@ function LoginForm() {
     });
 
     if (res?.error) {
-      console.debug("[login] signIn error", res);
       // Distinguish "wrong password" from "email not yet verified"
       try {
         const check = await fetch("/api/auth/needs-verification", {
@@ -54,13 +53,15 @@ function LoginForm() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email }),
         });
-        const data = await check.json();
-        if (data.needsVerification) {
-          router.push(`/verify-email?email=${encodeURIComponent(email)}`);
-          return;
+        if (check.ok) {
+          const data = await check.json();
+          if (data.needsVerification) {
+            router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+            return;
+          }
         }
-      } catch (e) {
-        console.debug("[login] needs-verification probe failed", e);
+      } catch {
+        // fall through to generic invalid message
       }
       setErrorMessage("Invalid email or password");
       setProcessing(false);
@@ -70,7 +71,6 @@ function LoginForm() {
     const session = await getSession();
     const role = session?.user?.role;
     const target = callbackUrl ?? defaultLandingForRole(role);
-    console.debug("[login] success", { role, target });
     router.push(target);
   }
 

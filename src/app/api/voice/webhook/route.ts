@@ -209,12 +209,18 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Modern Vapi expects { results: [{ toolCallId, result }] }.
-    // Legacy `function-call` expects { result }.
+    // Vapi expects result as a string in the tool-calls response so the LLM can
+    // consume it as text. If we hand back a raw object it silently drops the
+    // turn and the call goes dead.
+    const stringified = results.map((r) => ({
+      toolCallId: r.toolCallId,
+      result: typeof r.result === "string" ? r.result : JSON.stringify(r.result),
+    }));
+
     if (type === "tool-calls") {
-      return NextResponse.json({ results });
+      return NextResponse.json({ results: stringified });
     }
-    return NextResponse.json({ result: results[0]?.result });
+    return NextResponse.json({ result: stringified[0]?.result });
   }
 
   // Other types (speech-update, conversation-update, etc.) — ack and ignore.

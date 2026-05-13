@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import VoiceCallButton from "@/components/customer/VoiceCallButton";
 
 export const dynamic = "force-dynamic";
 
@@ -51,7 +52,7 @@ export default async function CustomerDashboardPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">
-          Welcome back, {user.name.split(" ")[0]}
+          Welcome back, {(user.name ?? "").split(" ")[0] || "there"}
         </h1>
         <p className="mt-1 text-sm text-gray-500">
           {unreadCount > 0
@@ -59,6 +60,8 @@ export default async function CustomerDashboardPage() {
             : "You're all caught up."}
         </p>
       </div>
+
+      <VoiceCallButton customerName={user.name ?? undefined} />
 
       <section className="rounded-lg border border-gray-200 bg-white p-6">
         <div className="mb-4 flex items-center justify-between">

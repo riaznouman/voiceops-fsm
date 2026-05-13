@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth-guard";
 
 function haversine(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371;
@@ -14,6 +15,17 @@ function haversine(lat1: number, lng1: number, lat2: number, lng2: number): numb
 }
 
 export async function GET(request: NextRequest) {
+  let user;
+  try {
+    user = await getCurrentUser(request);
+  } catch (err: unknown) {
+    const e = err as { status: number; message: string };
+    return NextResponse.json({ error: e.message }, { status: e.status });
+  }
+  if (!["ADMIN", "MANAGER"].includes(user.role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const { searchParams } = new URL(request.url);
   const serviceId = searchParams.get("serviceId");
   const scheduledAtRaw = searchParams.get("scheduledAt");

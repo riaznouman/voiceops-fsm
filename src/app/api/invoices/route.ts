@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth-guard";
+import { createWithRef } from "@/lib/ref-number";
 import type { InvoiceStatus, Prisma } from "@prisma/client";
+
+const round2 = (n: number) => Math.round(n * 100) / 100;
 
 const VALID_STATUSES: InvoiceStatus[] = ["DRAFT", "SENT", "PAID", "CANCELLED"];
 
@@ -75,41 +78,58 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "At least one line item is required" }, { status: 400 });
   }
 
-  const processedItems = lineItems.map((item: { description: string; quantity: number; unitPrice: number }) => ({
-    description: item.description,
-    quantity: item.quantity,
-    unitPrice: item.unitPrice,
-    lineTotal: item.quantity * item.unitPrice,
-  }));
+  const processedItems: { description: string; quantity: number; unitPrice: number; lineTotal: number }[] = [];
+  for (const raw of lineItems) {
+    const description = String(raw?.description ?? "").trim();
+    const quantity = Number(raw?.quantity);
+    const unitPrice = Number(raw?.unitPrice);
+    if (!description) {
+      return NextResponse.json({ error: "Line item description is required" }, { status: 400 });
+    }
+    if (!Number.isFinite(quantity) || quantity <= 0) {
+      return NextResponse.json({ error: "Line item quantity must be a positive number" }, { status: 400 });
+    }
+    if (!Number.isFinite(unitPrice) || unitPrice < 0) {
+      return NextResponse.json({ error: "Line item unitPrice must be a non-negative number" }, { status: 400 });
+    }
+    processedItems.push({
+      description,
+      quantity,
+      unitPrice,
+      lineTotal: round2(quantity * unitPrice),
+    });
+  }
 
-  const subtotal = processedItems.reduce((sum, item) => sum + item.lineTotal, 0);
+  const subtotal = round2(processedItems.reduce((sum, item) => sum + item.lineTotal, 0));
   const taxRate = 0.1;
-  const taxAmount = subtotal * taxRate;
-  const total = subtotal + taxAmount;
+  const taxAmount = round2(subtotal * taxRate);
+  const total = round2(subtotal + taxAmount);
 
-  const count = await prisma.invoice.count();
-  const referenceNumber = `INV-${String(count + 1).padStart(5, "0")}`;
-
-  const invoice = await prisma.invoice.create({
-    data: {
-      referenceNumber,
-      customerId,
-      workOrderId: workOrderId ?? null,
-      dueDate: dueDate ? new Date(dueDate) : null,
-      notes: notes ?? null,
-      subtotal,
-      taxRate,
-      taxAmount,
-      total,
-      lineItems: {
-        create: processedItems,
-      },
-    },
-    include: {
-      customer: { select: { id: true, name: true, email: true } },
-      lineItems: true,
-    },
-  });
+  const invoice = await createWithRef(
+    "INV",
+    () => prisma.invoice.count(),
+    (referenceNumber) =>
+      prisma.invoice.create({
+        data: {
+          referenceNumber,
+          customerId,
+          workOrderId: workOrderId ?? null,
+          dueDate: dueDate ? new Date(dueDate) : null,
+          notes: notes ?? null,
+          subtotal,
+          taxRate,
+          taxAmount,
+          total,
+          lineItems: {
+            create: processedItems,
+          },
+        },
+        include: {
+          customer: { select: { id: true, name: true, email: true } },
+          lineItems: true,
+        },
+      })
+  );
 
   return NextResponse.json(invoice, { status: 201 });
 }

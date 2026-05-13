@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
 import { getCurrentUser } from "@/lib/auth-guard";
 import { logActivity } from "@/lib/activity-log";
 import {
-  ALLOWED_TRANSITIONS,
   InvalidTransitionError,
   VALID_STATUSES,
   assertTransition,
@@ -17,6 +15,23 @@ const TECHNICIAN_ALLOWED_TARGETS: WorkOrderStatus[] = [
   "IN_PROGRESS",
   "COMPLETED",
 ];
+
+// Fields a client can update via PATCH, scoped by role.
+const ADMIN_UPDATE_FIELDS = [
+  "status",
+  "technicianId",
+  "scheduledAt",
+  "priority",
+  "issueDescription",
+  "resolutionNotes",
+  "address",
+  "lat",
+  "lng",
+  "serviceId",
+  "cancelledReason",
+] as const;
+
+const TECH_UPDATE_FIELDS = ["status", "resolutionNotes"] as const;
 
 export async function GET(
   request: NextRequest,
@@ -119,8 +134,14 @@ export async function PATCH(
     }
   }
 
-  const data: Record<string, unknown> = { ...body };
-  if (body.scheduledAt) data.scheduledAt = new Date(body.scheduledAt);
+  const allowedFields =
+    user.role === "TECHNICIAN" ? TECH_UPDATE_FIELDS : ADMIN_UPDATE_FIELDS;
+
+  const data: Record<string, unknown> = {};
+  for (const key of allowedFields) {
+    if (body[key] !== undefined) data[key] = body[key];
+  }
+  if (data.scheduledAt) data.scheduledAt = new Date(data.scheduledAt as string);
   if (body.status === "CANCELLED" && workOrder.status !== "CANCELLED") {
     data.cancelledAt = new Date();
   }
@@ -129,10 +150,9 @@ export async function PATCH(
 
   if (body.status !== undefined && body.status !== workOrder.status) {
     await logActivity(id, user.userId, "STATUS_CHANGED", workOrder.status, body.status);
-  } else if (Object.keys(body).length > 0) {
+  } else if (Object.keys(data).length > 0) {
     await logActivity(id, user.userId, "UPDATED");
   }
 
-  void ALLOWED_TRANSITIONS;
   return NextResponse.json(updated);
 }

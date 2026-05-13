@@ -1,12 +1,29 @@
 import { prisma } from "@/lib/prisma";
 import { logActivity } from "@/lib/activity-log";
 import { notify } from "@/lib/notify";
+import { createWithRef } from "@/lib/ref-number";
+import type { Prisma } from "@prisma/client";
 
 export async function check_availability(date: string, serviceType: string) {
   const baseDate = new Date(date);
   if (isNaN(baseDate.getTime())) {
     return { error: "Invalid date" };
   }
+
+  let requiredSkillIds: string[] = [];
+  if (serviceType) {
+    const service = await prisma.service.findFirst({
+      where: { OR: [{ id: serviceType }, { slug: serviceType }, { name: serviceType }] },
+      include: { serviceSkills: { select: { skillId: true } } },
+    });
+    if (service) {
+      requiredSkillIds = service.serviceSkills.map((s) => s.skillId);
+    }
+  }
+
+  const skillFilter: Prisma.UserWhereInput = requiredSkillIds.length
+    ? { AND: requiredSkillIds.map((skillId) => ({ technicianSkills: { some: { skillId } } })) }
+    : {};
 
   const slots: string[] = [];
 
@@ -37,6 +54,7 @@ export async function check_availability(date: string, serviceType: string) {
           role: "TECHNICIAN",
           status: "ACTIVE",
           id: { notIn: busyIds },
+          ...skillFilter,
         },
       });
 
@@ -46,7 +64,6 @@ export async function check_availability(date: string, serviceType: string) {
     }
   }
 
-  void serviceType;
   return { availableSlots: slots };
 }
 
@@ -78,21 +95,6 @@ export async function create_booking(
     });
   }
 
-  const count = await prisma.workOrder.count();
-  const referenceNumber = `VO-${String(count + 1).padStart(5, "0")}`;
-
-  const workOrder = await prisma.workOrder.create({
-    data: {
-      referenceNumber,
-      customerId: customer.id,
-      serviceId: serviceId || null,
-      scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
-      address,
-      status: "PENDING",
-      priority: "NORMAL",
-    },
-  });
-
   let suggestedTechnicianId: string | null = null;
 
   if (serviceId) {
@@ -117,7 +119,28 @@ export async function create_booking(
     }
   }
 
+  const workOrder = await createWithRef(
+    "VO",
+    () => prisma.workOrder.count(),
+    (referenceNumber) =>
+      prisma.workOrder.create({
+        data: {
+          referenceNumber,
+          customerId: customer.id,
+          serviceId: serviceId || null,
+          technicianId: suggestedTechnicianId,
+          scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
+          address,
+          status: "PENDING",
+          priority: "NORMAL",
+        },
+      })
+  );
+
   await logActivity(workOrder.id, customer.id, "CREATED", undefined, "PENDING", "Booked via voice");
+  if (suggestedTechnicianId) {
+    await logActivity(workOrder.id, customer.id, "ASSIGNED", undefined, suggestedTechnicianId, "Auto-assigned via voice");
+  }
 
   const manager = await prisma.user.findFirst({ where: { role: "MANAGER" } });
   if (manager) {
@@ -125,12 +148,12 @@ export async function create_booking(
       manager.id,
       "NEW_BOOKING",
       "New booking via voice",
-      `Work order ${referenceNumber} created for ${customerName}`,
+      `Work order ${workOrder.referenceNumber} created for ${customerName}`,
       `/admin/work-orders/${workOrder.id}`
     );
   }
 
-  return { referenceNumber, workOrderId: workOrder.id, suggestedTechnicianId };
+  return { referenceNumber: workOrder.referenceNumber, workOrderId: workOrder.id, suggestedTechnicianId };
 }
 
 export async function get_customer(phone: string) {

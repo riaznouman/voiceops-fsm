@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
 import { getCurrentUser } from "@/lib/auth-guard";
+import { createWithRef } from "@/lib/ref-number";
 import type { Prisma, WorkOrderStatus } from "@prisma/client";
 
 const VALID_STATUSES: WorkOrderStatus[] = [
@@ -85,11 +85,17 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ data, page, pageSize, total });
 }
 
-// POST /api/work-orders - create a new work order
+// POST /api/work-orders - create a new work order (admin/manager only)
 export async function POST(request: NextRequest) {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  let user;
+  try {
+    user = await getCurrentUser(request);
+  } catch (err: unknown) {
+    const e = err as { status: number; message: string };
+    return NextResponse.json({ error: e.message }, { status: e.status });
+  }
+  if (!["ADMIN", "MANAGER"].includes(user.role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const body = await request.json();
@@ -99,21 +105,27 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Customer ID is required" }, { status: 400 });
   }
 
-  // generate reference number
-  const count = await prisma.workOrder.count();
-  const referenceNumber = `VO-${String(count + 1).padStart(5, "0")}`;
+  const customer = await prisma.user.findUnique({ where: { id: customerId } });
+  if (!customer) {
+    return NextResponse.json({ error: "Customer not found" }, { status: 400 });
+  }
 
-  const workOrder = await prisma.workOrder.create({
-    data: {
-      referenceNumber,
-      customerId,
-      serviceId,
-      priority: priority || "NORMAL",
-      scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
-      address,
-      issueDescription,
-    },
-  });
+  const workOrder = await createWithRef(
+    "VO",
+    () => prisma.workOrder.count(),
+    (referenceNumber) =>
+      prisma.workOrder.create({
+        data: {
+          referenceNumber,
+          customerId,
+          serviceId,
+          priority: priority || "NORMAL",
+          scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
+          address,
+          issueDescription,
+        },
+      })
+  );
 
   return NextResponse.json(workOrder, { status: 201 });
 }

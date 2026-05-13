@@ -14,8 +14,22 @@ export async function GET(
     return NextResponse.json({ error: e.message }, { status: e.status });
   }
 
-  void user;
   const { id } = await params;
+
+  const wo = await prisma.workOrder.findUnique({
+    where: { id },
+    select: { id: true, customerId: true, technicianId: true },
+  });
+  if (!wo) {
+    return NextResponse.json({ error: "Work order not found" }, { status: 404 });
+  }
+
+  if (user.role === "TECHNICIAN" && wo.technicianId !== user.userId) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+  if (user.role === "CUSTOMER" && wo.customerId !== user.userId) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const logs = await prisma.activityLog.findMany({
     where: { workOrderId: id },

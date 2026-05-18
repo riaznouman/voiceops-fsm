@@ -18,7 +18,7 @@ export async function GET(
   }
 
   if (!["ADMIN", "MANAGER"].includes(user.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "You don't have permission to manage invoices." }, { status: 403 });
   }
 
   const { id } = await params;
@@ -34,7 +34,7 @@ export async function GET(
   });
 
   if (!invoice) {
-    return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that invoice." }, { status: 404 });
   }
 
   return NextResponse.json(invoice);
@@ -53,20 +53,20 @@ export async function PATCH(
   }
 
   if (!["ADMIN", "MANAGER"].includes(user.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "You don't have permission to manage invoices." }, { status: 403 });
   }
 
   const { id } = await params;
   const invoice = await prisma.invoice.findUnique({ where: { id } });
   if (!invoice) {
-    return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that invoice." }, { status: 404 });
   }
 
   const body = await request.json();
   const { status } = body;
 
   if (!status || !VALID_STATUSES.includes(status)) {
-    return NextResponse.json({ error: "Valid status is required" }, { status: 400 });
+    return NextResponse.json({ error: "Please choose a valid invoice status." }, { status: 400 });
   }
 
   const data: Record<string, unknown> = { status };
@@ -91,18 +91,18 @@ export async function DELETE(
   }
 
   if (!["ADMIN", "MANAGER"].includes(user.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "You don't have permission to manage invoices." }, { status: 403 });
   }
 
   const { id } = await params;
   const invoice = await prisma.invoice.findUnique({ where: { id } });
   if (!invoice) {
-    return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that invoice." }, { status: 404 });
   }
 
   if (invoice.status !== "DRAFT") {
     return NextResponse.json(
-      { error: "Only DRAFT invoices can be deleted" },
+      { error: "Only draft invoices can be deleted." },
       { status: 422 }
     );
   }

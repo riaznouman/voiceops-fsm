@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (!["ADMIN", "MANAGER"].includes(user.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "You don't have permission to manage invoices." }, { status: 403 });
   }
 
   const { searchParams } = new URL(request.url);
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
   const pageSize = isNaN(pageSizeRaw) || pageSizeRaw < 1 ? 20 : pageSizeRaw;
 
   if (status && !VALID_STATUSES.includes(status as InvoiceStatus)) {
-    return NextResponse.json({ error: "Invalid status" }, { status: 400 });
+    return NextResponse.json({ error: "Please choose a valid invoice status." }, { status: 400 });
   }
 
   const where: Prisma.InvoiceWhereInput = {};
@@ -64,18 +64,18 @@ export async function POST(request: NextRequest) {
   }
 
   if (!["ADMIN", "MANAGER"].includes(user.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "You don't have permission to manage invoices." }, { status: 403 });
   }
 
   const body = await request.json();
   const { workOrderId, customerId, dueDate, notes, lineItems } = body;
 
   if (!customerId) {
-    return NextResponse.json({ error: "customerId is required" }, { status: 400 });
+    return NextResponse.json({ error: "Please select a customer for this invoice." }, { status: 400 });
   }
 
   if (!Array.isArray(lineItems) || lineItems.length === 0) {
-    return NextResponse.json({ error: "At least one line item is required" }, { status: 400 });
+    return NextResponse.json({ error: "Please add at least one line item." }, { status: 400 });
   }
 
   const processedItems: { description: string; quantity: number; unitPrice: number; lineTotal: number }[] = [];
@@ -84,13 +84,13 @@ export async function POST(request: NextRequest) {
     const quantity = Number(raw?.quantity);
     const unitPrice = Number(raw?.unitPrice);
     if (!description) {
-      return NextResponse.json({ error: "Line item description is required" }, { status: 400 });
+      return NextResponse.json({ error: "Each line item needs a description." }, { status: 400 });
     }
     if (!Number.isFinite(quantity) || quantity <= 0) {
-      return NextResponse.json({ error: "Line item quantity must be a positive number" }, { status: 400 });
+      return NextResponse.json({ error: "Quantity must be greater than zero." }, { status: 400 });
     }
     if (!Number.isFinite(unitPrice) || unitPrice < 0) {
-      return NextResponse.json({ error: "Line item unitPrice must be a non-negative number" }, { status: 400 });
+      return NextResponse.json({ error: "Unit price must be zero or greater." }, { status: 400 });
     }
     processedItems.push({
       description,

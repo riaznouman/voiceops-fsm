@@ -6,7 +6,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
   const { id } = await params;
   const skill = await prisma.skill.findUnique({ where: { id } });
   if (!skill) {
-    return NextResponse.json({ error: "Skill not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that skill." }, { status: 404 });
   }
   return NextResponse.json(skill);
 }
@@ -21,13 +21,13 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   }
 
   if (!["ADMIN", "MANAGER"].includes(user.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "You don't have permission to manage skills." }, { status: 403 });
   }
 
   const { id } = await params;
   const skill = await prisma.skill.findUnique({ where: { id } });
   if (!skill) {
-    return NextResponse.json({ error: "Skill not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that skill." }, { status: 404 });
   }
 
   const body = await request.json();
@@ -49,13 +49,13 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   }
 
   if (!["ADMIN", "MANAGER"].includes(user.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "You don't have permission to manage skills." }, { status: 403 });
   }
 
   const { id } = await params;
   const skill = await prisma.skill.findUnique({ where: { id } });
   if (!skill) {
-    return NextResponse.json({ error: "Skill not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that skill." }, { status: 404 });
   }
 
   await prisma.skill.delete({ where: { id } });

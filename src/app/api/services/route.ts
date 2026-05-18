@@ -22,17 +22,17 @@ export async function POST(request: NextRequest) {
   const { name, description, basePrice, durationMinutes, isActive, categoryId } = body;
 
   if (!name || !name.trim()) {
-    return NextResponse.json({ error: "Name is required" }, { status: 400 });
+    return NextResponse.json({ error: "Please enter a service name." }, { status: 400 });
   }
   if (basePrice !== undefined && (typeof basePrice !== "number" || basePrice < 0)) {
-    return NextResponse.json({ error: "Price must be a non-negative number" }, { status: 400 });
+    return NextResponse.json({ error: "Price must be zero or greater." }, { status: 400 });
   }
 
   const slug = name.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
 
   const existing = await prisma.service.findUnique({ where: { slug } });
   if (existing) {
-    return NextResponse.json({ error: "A service with this name already exists" }, { status: 409 });
+    return NextResponse.json({ error: "A service with this name already exists." }, { status: 409 });
   }
 
   const service = await prisma.service.create({

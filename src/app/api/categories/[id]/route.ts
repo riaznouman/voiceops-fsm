@@ -9,7 +9,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     include: { _count: { select: { services: true } } },
   });
   if (!category) {
-    return NextResponse.json({ error: "Category not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that category." }, { status: 404 });
   }
   return NextResponse.json(category);
 }
@@ -24,13 +24,13 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   }
 
   if (!["ADMIN", "MANAGER"].includes(user.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "You don't have permission to manage categories." }, { status: 403 });
   }
 
   const { id } = await params;
   const category = await prisma.category.findUnique({ where: { id } });
   if (!category) {
-    return NextResponse.json({ error: "Category not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that category." }, { status: 404 });
   }
 
   const body = await request.json();
@@ -56,7 +56,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   }
 
   if (!["ADMIN", "MANAGER"].includes(user.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "You don't have permission to manage categories." }, { status: 403 });
   }
 
   const { id } = await params;
@@ -65,12 +65,12 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     include: { _count: { select: { services: true } } },
   });
   if (!category) {
-    return NextResponse.json({ error: "Category not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that category." }, { status: 404 });
   }
 
   if (category._count.services > 0) {
     return NextResponse.json(
-      { error: "Cannot delete category with linked services" },
+      { error: "This category still has services linked to it. Move or remove them first." },
       { status: 422 }
     );
   }

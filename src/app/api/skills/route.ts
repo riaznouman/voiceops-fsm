@@ -17,14 +17,14 @@ export async function POST(request: NextRequest) {
   }
 
   if (!["ADMIN", "MANAGER"].includes(user.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "You don't have permission to manage skills." }, { status: 403 });
   }
 
   const body = await request.json();
   const { name, description } = body;
 
   if (!name || !name.trim()) {
-    return NextResponse.json({ error: "Name is required" }, { status: 400 });
+    return NextResponse.json({ error: "Please enter a skill name." }, { status: 400 });
   }
 
   const skill = await prisma.skill.create({

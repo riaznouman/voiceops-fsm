@@ -9,7 +9,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     include: { category: true, serviceSkills: { include: { skill: true } } },
   });
   if (!service) {
-    return NextResponse.json({ error: "Service not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that service." }, { status: 404 });
   }
   return NextResponse.json(service);
 }
@@ -25,14 +25,14 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   const { id } = await params;
   const service = await prisma.service.findUnique({ where: { id } });
   if (!service) {
-    return NextResponse.json({ error: "Service not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that service." }, { status: 404 });
   }
 
   const body = await request.json();
   const { name, description, basePrice, durationMinutes, isActive, categoryId } = body;
 
   if (basePrice !== undefined && (typeof basePrice !== "number" || basePrice < 0)) {
-    return NextResponse.json({ error: "Price must be a non-negative number" }, { status: 400 });
+    return NextResponse.json({ error: "Price must be zero or greater." }, { status: 400 });
   }
 
   const data: Record<string, unknown> = {};
@@ -69,7 +69,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   const { id } = await params;
   const service = await prisma.service.findUnique({ where: { id } });
   if (!service) {
-    return NextResponse.json({ error: "Service not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that service." }, { status: 404 });
   }
 
   await prisma.service.delete({ where: { id } });

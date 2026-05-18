@@ -21,21 +21,21 @@ export async function POST(request: NextRequest) {
   }
 
   if (!["ADMIN", "MANAGER"].includes(user.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "You don't have permission to manage categories." }, { status: 403 });
   }
 
   const body = await request.json();
   const { name, description, isActive } = body;
 
   if (!name || !name.trim()) {
-    return NextResponse.json({ error: "Name is required" }, { status: 400 });
+    return NextResponse.json({ error: "Please enter a category name." }, { status: 400 });
   }
 
   const slug = name.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
 
   const existing = await prisma.category.findUnique({ where: { slug } });
   if (existing) {
-    return NextResponse.json({ error: "Category with this name already exists" }, { status: 409 });
+    return NextResponse.json({ error: "A category with this name already exists." }, { status: 409 });
   }
 
   const category = await prisma.category.create({

@@ -21,7 +21,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   }
 
   if (!["ADMIN", "MANAGER"].includes(user.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "You don't have permission to manage service skills." }, { status: 403 });
   }
 
   const { id } = await params;
@@ -29,14 +29,14 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const { skillId } = body;
 
   if (!skillId) {
-    return NextResponse.json({ error: "skillId is required" }, { status: 400 });
+    return NextResponse.json({ error: "Please choose a skill." }, { status: 400 });
   }
 
   const existing = await prisma.serviceSkill.findUnique({
     where: { serviceId_skillId: { serviceId: id, skillId } },
   });
   if (existing) {
-    return NextResponse.json({ error: "Skill already assigned to this service" }, { status: 422 });
+    return NextResponse.json({ error: "This skill is already linked to this service." }, { status: 422 });
   }
 
   const record = await prisma.serviceSkill.create({
@@ -57,7 +57,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   }
 
   if (!["ADMIN", "MANAGER"].includes(user.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "You don't have permission to manage service skills." }, { status: 403 });
   }
 
   const { id } = await params;
@@ -65,14 +65,14 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   const { skillId } = body;
 
   if (!skillId) {
-    return NextResponse.json({ error: "skillId is required" }, { status: 400 });
+    return NextResponse.json({ error: "Please choose a skill." }, { status: 400 });
   }
 
   const existing = await prisma.serviceSkill.findUnique({
     where: { serviceId_skillId: { serviceId: id, skillId } },
   });
   if (!existing) {
-    return NextResponse.json({ error: "Skill not assigned to this service" }, { status: 404 });
+    return NextResponse.json({ error: "This skill isn't linked to this service." }, { status: 404 });
   }
 
   await prisma.serviceSkill.delete({

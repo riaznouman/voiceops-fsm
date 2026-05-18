@@ -45,8 +45,12 @@ export default function TechnicianDetailPage() {
     setLoading(true);
     Promise.all([
       fetch(`/api/users/${id}`).then((r) => { if (!r.ok) throw new Error(); return r.json(); }),
-      fetch(`/api/work-orders?technicianId=${id}&pageSize=50`).then((r) => r.json()).then((d) => d.data ?? []),
-      fetch("/api/skills?pageSize=200").then((r) => r.json()).then((d) => d.data ?? d ?? []),
+      fetch(`/api/work-orders?technicianId=${id}&pageSize=50`)
+        .then((r) => (r.ok ? r.json() : { data: [] }))
+        .then((d) => d.data ?? []),
+      fetch("/api/skills?pageSize=200")
+        .then((r) => (r.ok ? r.json() : { data: [] }))
+        .then((d) => (Array.isArray(d) ? d : d.data ?? [])),
     ])
       .then(([t, wos, skills]) => { setTech(t); setWorkOrders(wos); setAllSkills(skills); })
       .catch(() => setError("Failed to load technician."))
@@ -76,11 +80,17 @@ export default function TechnicianDetailPage() {
 
   async function handleRemoveSkill(skillId: string) {
     try {
-      await fetch(`/api/users/${id}/skills/${skillId}`, { method: "DELETE" });
+      const r = await fetch(`/api/users/${id}/skills/${skillId}`, { method: "DELETE" });
+      if (!r.ok) {
+        alert("Failed to remove skill.");
+        return;
+      }
       setTech((prev) =>
         prev ? { ...prev, skills: (prev.skills ?? []).filter((s) => s.id !== skillId) } : prev
       );
-    } catch {}
+    } catch {
+      alert("Failed to remove skill.");
+    }
   }
 
   if (loading) {

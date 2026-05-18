@@ -108,17 +108,26 @@ export default function WorkOrderDetailPage() {
 
   useEffect(() => {
     if (tab === "Notes") {
-      fetch(`/api/work-orders/${id}/notes`).then((r) => r.json()).then(setNotes).catch(() => {});
+      fetch(`/api/work-orders/${id}/notes`)
+        .then((r) => (r.ok ? r.json() : []))
+        .then((d) => setNotes(Array.isArray(d) ? d : []))
+        .catch(() => {});
     } else if (tab === "Photos") {
-      fetch(`/api/work-orders/${id}/photos`).then((r) => r.json()).then(setPhotos).catch(() => {});
+      fetch(`/api/work-orders/${id}/photos`)
+        .then((r) => (r.ok ? r.json() : []))
+        .then((d) => setPhotos(Array.isArray(d) ? d : []))
+        .catch(() => {});
     } else if (tab === "Activity") {
-      fetch(`/api/work-orders/${id}/activity`).then((r) => r.json()).then(setActivity).catch(() => {});
+      fetch(`/api/work-orders/${id}/activity`)
+        .then((r) => (r.ok ? r.json() : []))
+        .then((d) => setActivity(Array.isArray(d) ? d : []))
+        .catch(() => {});
     }
   }, [tab, id]);
 
   useEffect(() => {
     fetch("/api/users?role=TECHNICIAN&pageSize=100")
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : { data: [] }))
       .then((d) => setTechnicians(d.data ?? []))
       .catch(() => {});
   }, []);

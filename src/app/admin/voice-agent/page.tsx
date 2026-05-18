@@ -51,8 +51,10 @@ export default function VoiceAgentPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/voice/stats").then((r) => r.json()),
-      fetch("/api/voice/calls?pageSize=10").then((r) => r.json()).then((d) => d.data ?? []),
+      fetch("/api/voice/stats").then((r) => (r.ok ? r.json() : null)),
+      fetch("/api/voice/calls?pageSize=10")
+        .then((r) => (r.ok ? r.json() : { data: [] }))
+        .then((d) => (Array.isArray(d) ? d : d.data ?? [])),
     ])
       .then(([s, calls]) => { setStats(s); setRecentCalls(calls); })
       .catch(() => {})

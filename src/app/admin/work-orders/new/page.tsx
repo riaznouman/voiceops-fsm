@@ -26,11 +26,11 @@ export default function NewWorkOrderPage() {
 
   useEffect(() => {
     fetch("/api/users?role=CUSTOMER&pageSize=200")
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : { data: [] }))
       .then((d) => setCustomers(d.data ?? []))
       .catch(() => {});
     fetch("/api/services?pageSize=200")
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : { data: [] }))
       .then((d) => setServices(d.data ?? d ?? []))
       .catch(() => {});
   }, []);
@@ -136,7 +136,6 @@ export default function NewWorkOrderPage() {
               onChange={(e) => set("priority", e.target.value)}
               className={inputCls + " w-full"}
             >
-              <option value="LOW">Low</option>
               <option value="NORMAL">Normal</option>
               <option value="HIGH">High</option>
               <option value="URGENT">Urgent</option>

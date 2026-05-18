@@ -40,7 +40,9 @@ export default function CustomerDetailPage() {
     setLoading(true);
     Promise.all([
       fetch(`/api/users/${id}`).then((r) => { if (!r.ok) throw new Error(); return r.json(); }),
-      fetch(`/api/work-orders?customerId=${id}&pageSize=50`).then((r) => r.json()).then((d) => d.data ?? []),
+      fetch(`/api/work-orders?customerId=${id}&pageSize=50`)
+        .then((r) => (r.ok ? r.json() : { data: [] }))
+        .then((d) => d.data ?? []),
     ])
       .then(([cust, wos]) => { setCustomer(cust); setWorkOrders(wos); })
       .catch(() => setError("Failed to load customer."))

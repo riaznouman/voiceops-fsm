@@ -32,7 +32,7 @@ export default function NewInvoicePage() {
 
   useEffect(() => {
     fetch("/api/users?role=CUSTOMER&pageSize=200")
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : { data: [] }))
       .then((d) => setCustomers(d.data ?? []))
       .catch(() => {});
   }, []);
@@ -40,7 +40,7 @@ export default function NewInvoicePage() {
   useEffect(() => {
     if (!form.customerId) { setWorkOrders([]); return; }
     fetch(`/api/work-orders?customerId=${form.customerId}&pageSize=50`)
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : { data: [] }))
       .then((d) => setWorkOrders(d.data ?? []))
       .catch(() => {});
   }, [form.customerId]);

@@ -80,7 +80,11 @@ export default function CategoriesPage() {
 
   async function handleDelete(id: string) {
     if (!confirm("Delete this category?")) return;
-    await fetch(`/api/categories/${id}`, { method: "DELETE" });
+    const r = await fetch(`/api/categories/${id}`, { method: "DELETE" });
+    if (!r.ok) {
+      alert("Failed to delete category.");
+      return;
+    }
     load();
   }
 

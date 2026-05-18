@@ -80,7 +80,11 @@ export default function SkillsPage() {
 
   async function handleDelete(id: string) {
     if (!confirm("Delete this skill?")) return;
-    await fetch(`/api/skills/${id}`, { method: "DELETE" });
+    const r = await fetch(`/api/skills/${id}`, { method: "DELETE" });
+    if (!r.ok) {
+      alert("Failed to delete skill.");
+      return;
+    }
     load();
   }
 

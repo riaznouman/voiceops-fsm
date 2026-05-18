@@ -104,7 +104,11 @@ export default function ServicesPage() {
 
   async function handleDelete(id: string) {
     if (!confirm("Delete this service?")) return;
-    await fetch(`/api/services/${id}`, { method: "DELETE" });
+    const r = await fetch(`/api/services/${id}`, { method: "DELETE" });
+    if (!r.ok) {
+      alert("Failed to delete service.");
+      return;
+    }
     load();
   }
 

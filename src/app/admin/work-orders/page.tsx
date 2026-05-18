@@ -8,8 +8,7 @@ import JobPriorityBadge from "@/components/admin/work-orders/JobPriorityBadge";
 import JobStatusBadge from "@/components/admin/work-orders/JobStatusBadge";
 import JobTableFilters from "@/components/admin/work-orders/JobTableFilters";
 import TechnicianAssignSelect from "@/components/admin/work-orders/TechnicianAssignSelect";
-// TODO: uncomment before submit
-// import Pagination from "@/components/ui/Pagination";
+import Pagination from "@/components/ui/Pagination";
 import type { WorkOrderStatus, WorkOrderPriority } from "@/lib/types";
 import { bodyCellClass, headCellClass, jobColumns } from "./columns";
 
@@ -167,20 +166,12 @@ function WorkOrdersContent() {
                     />
                   </td>
                   <td className={`${bodyCellClass} text-right`}>
-                    <div className="flex justify-end gap-1.5">
-                      <Link
-                        href={`/admin/work-orders/${wo.id}`}
-                        className="rounded border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100"
-                      >
-                        View
-                      </Link>
-                      <Link
-                        href={`/admin/work-orders/${wo.id}`}
-                        className="rounded border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100"
-                      >
-                        Edit
-                      </Link>
-                    </div>
+                    <Link
+                      href={`/admin/work-orders/${wo.id}`}
+                      className="inline-flex rounded border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100"
+                    >
+                      View
+                    </Link>
                   </td>
                 </tr>
               ))
@@ -189,8 +180,7 @@ function WorkOrdersContent() {
         </table>
       </section>
 
-      {/* TODO: uncomment before submit */}
-      {/* <Pagination page={page} pageSize={20} total={total} onPage={setPage} /> */}
+      <Pagination page={page} pageSize={20} total={total} onPage={setPage} />
     </>
   );
 }

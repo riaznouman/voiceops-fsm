@@ -10,7 +10,7 @@ interface LineItem {
   description: string;
   quantity: number;
   unitPrice: number;
-  total: number;
+  lineTotal: number;
 }
 
 interface Invoice {
@@ -19,7 +19,8 @@ interface Invoice {
   status: string;
   total: number;
   subtotal?: number;
-  tax?: number;
+  taxRate?: number;
+  taxAmount?: number;
   issueDate: string | null;
   dueDate: string | null;
   notes?: string | null;
@@ -201,8 +202,8 @@ export default function InvoiceDetailPage() {
                 <tr key={item.id} className="hover:bg-gray-50">
                   <td className={bodyCellClass}>{item.description}</td>
                   <td className={bodyCellClass}>{item.quantity}</td>
-                  <td className={bodyCellClass}>${item.unitPrice.toFixed(2)}</td>
-                  <td className={`${bodyCellClass} text-right font-medium`}>${item.total.toFixed(2)}</td>
+                  <td className={bodyCellClass}>${(item.unitPrice ?? 0).toFixed(2)}</td>
+                  <td className={`${bodyCellClass} text-right font-medium`}>${(item.lineTotal ?? 0).toFixed(2)}</td>
                 </tr>
               ))
             )}
@@ -216,10 +217,12 @@ export default function InvoiceDetailPage() {
                 <span className="text-gray-900">${invoice.subtotal.toFixed(2)}</span>
               </div>
             )}
-            {invoice.tax != null && (
+            {invoice.taxAmount != null && (
               <div className="flex justify-between">
-                <span className="text-gray-500">GST (10%)</span>
-                <span className="text-gray-900">${invoice.tax.toFixed(2)}</span>
+                <span className="text-gray-500">
+                  GST ({Math.round((invoice.taxRate ?? 0.1) * 100)}%)
+                </span>
+                <span className="text-gray-900">${invoice.taxAmount.toFixed(2)}</span>
               </div>
             )}
             <div className="flex justify-between border-t border-gray-200 pt-1 font-semibold">

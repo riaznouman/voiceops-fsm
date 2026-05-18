@@ -15,20 +15,20 @@ export async function POST(request: NextRequest) {
   const { email, password, name } = body;
 
   if (!email || !EMAIL_REGEX.test(email)) {
-    return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
+    return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
   }
 
   if (!password || password.length < 8) {
-    return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 });
+    return NextResponse.json({ error: "Password must be at least 8 characters long." }, { status: 400 });
   }
 
   if (!name || !name.trim()) {
-    return NextResponse.json({ error: "Name is required" }, { status: 400 });
+    return NextResponse.json({ error: "Please enter your full name." }, { status: 400 });
   }
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
-    return NextResponse.json({ error: "Email already in use" }, { status: 409 });
+    return NextResponse.json({ error: "This email is already registered. Try signing in instead." }, { status: 409 });
   }
 
   const hashedPassword = await hash(password, 12);

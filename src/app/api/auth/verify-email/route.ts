@@ -6,17 +6,17 @@ export async function POST(request: NextRequest) {
   const { email, code } = await request.json();
 
   if (!email || !code) {
-    return NextResponse.json({ error: "Email and code are required" }, { status: 400 });
+    return NextResponse.json({ error: "Please enter your email and the verification code." }, { status: 400 });
   }
 
   const user = await prisma.user.findUnique({ where: { email } });
 
   if (!user) {
-    return NextResponse.json({ error: "Invalid code" }, { status: 400 });
+    return NextResponse.json({ error: "That code doesn't look right. Please check and try again." }, { status: 400 });
   }
 
   if (user.emailVerifiedAt) {
-    return NextResponse.json({ error: "Email is already verified" }, { status: 400 });
+    return NextResponse.json({ error: "This email is already verified. You can sign in." }, { status: 400 });
   }
 
   if (!user.verificationCode || !user.verificationCodeExpiresAt) {
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
   const valid = await compare(String(code), user.verificationCode);
   if (!valid) {
-    return NextResponse.json({ error: "Invalid code" }, { status: 400 });
+    return NextResponse.json({ error: "That code doesn't look right. Please check and try again." }, { status: 400 });
   }
 
   await prisma.user.update({

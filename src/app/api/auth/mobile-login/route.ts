@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
   const { email, password } = body;
 
   if (!email || !password) {
-    return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
+    return NextResponse.json({ error: "Please enter your email and password." }, { status: 400 });
   }
 
   const ip = clientKey(request);
@@ -26,17 +26,17 @@ export async function POST(request: NextRequest) {
   });
 
   if (!user || user.status !== "ACTIVE") {
-    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    return NextResponse.json({ error: "Email or password is incorrect." }, { status: 401 });
   }
 
   const valid = await compare(password, user.password);
   if (!valid) {
-    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    return NextResponse.json({ error: "Email or password is incorrect." }, { status: 401 });
   }
 
   if (!user.emailVerifiedAt) {
     return NextResponse.json(
-      { error: "Email not verified", code: "EMAIL_NOT_VERIFIED" },
+      { error: "Please verify your email before signing in.", code: "EMAIL_NOT_VERIFIED" },
       { status: 403 }
     );
   }

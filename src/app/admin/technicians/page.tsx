@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { LoaderCircle, Search } from "lucide-react";
+import { HardHat, LoaderCircle, Search } from "lucide-react";
 import Pagination from "@/components/ui/Pagination";
 
 interface Technician {
@@ -111,8 +111,18 @@ export default function TechniciansPage() {
               </tr>
             ) : technicians.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-3 py-10 text-center text-sm text-gray-500">
-                  No technicians found.
+                <td colSpan={5} className="px-3 py-14">
+                  <div className="flex flex-col items-center gap-3 text-center">
+                    <HardHat className="h-10 w-10 text-gray-300" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">No technicians found</p>
+                      <p className="mt-1 text-xs text-gray-500">
+                        {search
+                          ? `No technicians match "${search}". Try a different search.`
+                          : "Technicians sign up themselves — none have registered yet."}
+                      </p>
+                    </div>
+                  </div>
                 </td>
               </tr>
             ) : (

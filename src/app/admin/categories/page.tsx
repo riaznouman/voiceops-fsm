@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
-import { LoaderCircle, Pencil, Plus, Trash2 } from "lucide-react";
+import { FolderTree, LoaderCircle, Pencil, Plus, Trash2 } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 
 interface Category { id: string; name: string; description?: string | null; }
@@ -126,7 +126,24 @@ export default function CategoriesPage() {
               </tr>
             ) : categories.length === 0 ? (
               <tr>
-                <td colSpan={3} className="px-3 py-10 text-center text-sm text-gray-500">No categories yet.</td>
+                <td colSpan={3} className="px-3 py-14">
+                  <div className="flex flex-col items-center gap-3 text-center">
+                    <FolderTree className="h-10 w-10 text-gray-300" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">No categories yet</p>
+                      <p className="mt-1 text-xs text-gray-500">
+                        Create your first category to group services together.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={openCreate}
+                      className="mt-1 inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
+                    >
+                      <Plus size={14} /> Add category
+                    </button>
+                  </div>
+                </td>
               </tr>
             ) : (
               categories.map((c) => (

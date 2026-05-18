@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { LoaderCircle, Search } from "lucide-react";
+import { LoaderCircle, Search, UserRound } from "lucide-react";
 import Pagination from "@/components/ui/Pagination";
 
 interface Customer {
@@ -116,8 +116,18 @@ export default function CustomersPage() {
               </tr>
             ) : customers.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-3 py-10 text-center text-sm text-gray-500">
-                  No customers found.
+                <td colSpan={4} className="px-3 py-14">
+                  <div className="flex flex-col items-center gap-3 text-center">
+                    <UserRound className="h-10 w-10 text-gray-300" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">No customers found</p>
+                      <p className="mt-1 text-xs text-gray-500">
+                        {search
+                          ? `No customers match "${search}". Try a different search.`
+                          : "No customers have registered yet."}
+                      </p>
+                    </div>
+                  </div>
                 </td>
               </tr>
             ) : (

@@ -95,19 +95,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: e.message }, { status: e.status });
   }
   if (!["ADMIN", "MANAGER"].includes(user.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "You don't have permission to create work orders." }, { status: 403 });
   }
 
   const body = await request.json();
   const { customerId, serviceId, priority, scheduledAt, address, issueDescription } = body;
 
   if (!customerId) {
-    return NextResponse.json({ error: "Customer ID is required" }, { status: 400 });
+    return NextResponse.json({ error: "Please select a customer for this work order." }, { status: 400 });
   }
 
   const customer = await prisma.user.findUnique({ where: { id: customerId } });
   if (!customer) {
-    return NextResponse.json({ error: "Customer not found" }, { status: 400 });
+    return NextResponse.json({ error: "We couldn't find that customer." }, { status: 400 });
   }
 
   const workOrder = await createWithRef(

@@ -24,20 +24,20 @@ export async function POST(
     select: { id: true, technicianId: true },
   });
   if (!wo) {
-    return NextResponse.json({ error: "Work order not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that work order." }, { status: 404 });
   }
 
   // Permission: admin/manager OR the assigned technician
   const isAdminOrManager = ["ADMIN", "MANAGER"].includes(me.role);
   const isAssignedTech = me.role === "TECHNICIAN" && wo.technicianId === me.userId;
   if (!isAdminOrManager && !isAssignedTech) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "Only the assigned technician or a manager can save a signature." }, { status: 403 });
   }
 
   const formData = await request.formData();
   const file = formData.get("signature") as File | null;
   if (!file) {
-    return NextResponse.json({ error: "signature field is required" }, { status: 400 });
+    return NextResponse.json({ error: "A signature is required to complete the job." }, { status: 400 });
   }
 
   const bytes = await file.arrayBuffer();

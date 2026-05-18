@@ -44,12 +44,12 @@ export async function POST(
   const { text } = body;
 
   if (!text || !text.trim()) {
-    return NextResponse.json({ error: "text is required" }, { status: 400 });
+    return NextResponse.json({ error: "Please write a note before saving." }, { status: 400 });
   }
 
   const workOrder = await prisma.workOrder.findUnique({ where: { id } });
   if (!workOrder) {
-    return NextResponse.json({ error: "Work order not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that work order." }, { status: 404 });
   }
 
   const note = await prisma.workOrderNote.create({

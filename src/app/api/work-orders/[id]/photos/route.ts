@@ -45,14 +45,14 @@ export async function POST(
 
   const workOrder = await prisma.workOrder.findUnique({ where: { id } });
   if (!workOrder) {
-    return NextResponse.json({ error: "Work order not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that work order." }, { status: 404 });
   }
 
   const formData = await request.formData();
   const file = formData.get("photo") as File | null;
 
   if (!file) {
-    return NextResponse.json({ error: "photo field is required" }, { status: 400 });
+    return NextResponse.json({ error: "Please attach a photo before uploading." }, { status: 400 });
   }
 
   const bytes = await file.arrayBuffer();

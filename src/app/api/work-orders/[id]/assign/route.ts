@@ -17,7 +17,7 @@ export async function PUT(
   }
 
   if (!["ADMIN", "MANAGER"].includes(user.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "You don't have permission to assign technicians." }, { status: 403 });
   }
 
   const { id } = await params;
@@ -25,7 +25,7 @@ export async function PUT(
   const { technicianId } = body;
 
   if (!technicianId) {
-    return NextResponse.json({ error: "technicianId is required" }, { status: 400 });
+    return NextResponse.json({ error: "Please choose a technician to assign." }, { status: 400 });
   }
 
   const workOrder = await prisma.workOrder.findUnique({
@@ -35,7 +35,7 @@ export async function PUT(
     },
   });
   if (!workOrder) {
-    return NextResponse.json({ error: "Work order not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that work order." }, { status: 404 });
   }
 
   if (workOrder.service && workOrder.service.serviceSkills.length > 0) {
@@ -48,7 +48,7 @@ export async function PUT(
     const missingSkills = requiredSkillIds.filter((sid) => !techSkillIds.includes(sid));
     if (missingSkills.length > 0) {
       return NextResponse.json(
-        { error: "Technician does not have all required skills for this service", missingSkills },
+        { error: "This technician doesn't have all the required skills for the job.", missingSkills },
         { status: 422 }
       );
     }

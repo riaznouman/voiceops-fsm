@@ -60,7 +60,7 @@ export async function GET(
   });
 
   if (!workOrder) {
-    return NextResponse.json({ error: "Work order not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that work order." }, { status: 404 });
   }
 
   return NextResponse.json(workOrder);
@@ -79,7 +79,7 @@ export async function PATCH(
   }
 
   if (user.role === "CUSTOMER") {
-    return NextResponse.json({ error: "Customers cannot update work orders" }, { status: 403 });
+    return NextResponse.json({ error: "Customers can't update work orders." }, { status: 403 });
   }
 
   const { id } = await params;
@@ -87,13 +87,13 @@ export async function PATCH(
 
   const workOrder = await prisma.workOrder.findUnique({ where: { id } });
   if (!workOrder) {
-    return NextResponse.json({ error: "Work order not found" }, { status: 404 });
+    return NextResponse.json({ error: "We couldn't find that work order." }, { status: 404 });
   }
 
   if (body.status !== undefined) {
     if (!VALID_STATUSES.includes(body.status)) {
       return NextResponse.json(
-        { error: `Invalid status. Must be one of: ${VALID_STATUSES.join(", ")}` },
+        { error: `That status isn't valid. Use one of: ${VALID_STATUSES.join(", ")}.` },
         { status: 400 }
       );
     }
@@ -104,13 +104,13 @@ export async function PATCH(
     if (user.role === "TECHNICIAN") {
       if (workOrder.technicianId !== user.userId) {
         return NextResponse.json(
-          { error: "You can only update work orders assigned to you" },
+          { error: "You can only update work orders assigned to you." },
           { status: 403 }
         );
       }
       if (!TECHNICIAN_ALLOWED_TARGETS.includes(to)) {
         return NextResponse.json(
-          { error: "Technicians cannot set this status" },
+          { error: "Technicians can't change a work order to that status." },
           { status: 403 }
         );
       }
@@ -122,7 +122,7 @@ export async function PATCH(
       if (err instanceof InvalidTransitionError) {
         return NextResponse.json(
           {
-            error: "Invalid status transition",
+            error: "That status change isn't allowed from the current status.",
             from: err.from,
             to: err.to,
             allowed: err.allowed,

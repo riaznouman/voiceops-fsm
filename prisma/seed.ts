@@ -5,81 +5,88 @@ import { hash } from "bcryptjs";
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
 
+async function upsertUserMigrating(
+  oldEmail: string,
+  data: {
+    name: string;
+    email: string;
+    password: string;
+    role: "ADMIN" | "MANAGER" | "TECHNICIAN" | "CUSTOMER";
+    phone?: string;
+    address?: string;
+    hourlyRate?: number;
+    lat?: number;
+    lng?: number;
+  }
+) {
+  if (oldEmail !== data.email) {
+    const legacy = await prisma.user.findUnique({ where: { email: oldEmail } });
+    if (legacy) {
+      return prisma.user.update({ where: { id: legacy.id }, data });
+    }
+  }
+  return prisma.user.upsert({
+    where: { email: data.email },
+    update: data,
+    create: data,
+  });
+}
+
 async function main() {
   const adminPassword = await hash("Admin@1234", 12);
-  const admin = await prisma.user.upsert({
-    where: { email: "admin@voiceops.com" },
-    update: {},
-    create: {
-      name: "Admin User",
-      email: "admin@voiceops.com",
-      password: adminPassword,
-      role: "ADMIN",
-      phone: "+61 400 000 001",
-    },
+  const admin = await upsertUserMigrating("admin@voiceops.com", {
+    name: "Nouman Riaz",
+    email: "nouman.riaz@cqumail.com",
+    password: adminPassword,
+    role: "ADMIN",
+    phone: "+61 400 000 001",
   });
   console.log(`  admin:      ${admin.email}`);
 
   const managerPassword = await hash("Manager@1234", 12);
-  const manager = await prisma.user.upsert({
-    where: { email: "manager@voiceops.com" },
-    update: {},
-    create: {
-      name: "Rachel Torres",
-      email: "manager@voiceops.com",
-      password: managerPassword,
-      role: "MANAGER",
-      phone: "+61 400 000 002",
-    },
+  const manager = await upsertUserMigrating("manager@voiceops.com", {
+    name: "Rachel Torres",
+    email: "manager@voiceops.com",
+    password: managerPassword,
+    role: "MANAGER",
+    phone: "+61 400 000 002",
   });
   console.log(`  manager:    ${manager.email}`);
 
   const techPassword = await hash("Tech@1234", 12);
-  const technician = await prisma.user.upsert({
-    where: { email: "tech@voiceops.com" },
-    update: {},
-    create: {
-      name: "Jake Miller",
-      email: "tech@voiceops.com",
-      password: techPassword,
-      role: "TECHNICIAN",
-      phone: "+61 400 000 003",
-      hourlyRate: 65.0,
-      lat: -33.8688,
-      lng: 151.2093,
-    },
+  const technician = await upsertUserMigrating("tech@voiceops.com", {
+    name: "Mehran Abbas",
+    email: "mehran.abbas@cqumail.com",
+    password: techPassword,
+    role: "TECHNICIAN",
+    phone: "+61 400 000 003",
+    hourlyRate: 65.0,
+    lat: -33.8688,
+    lng: 151.2093,
   });
   console.log(`  technician: ${technician.email}`);
 
   const tech2Password = await hash("Tech@1234", 12);
-  const technician2 = await prisma.user.upsert({
-    where: { email: "tech2@voiceops.com" },
-    update: {},
-    create: {
-      name: "Amy Chen",
-      email: "tech2@voiceops.com",
-      password: tech2Password,
-      role: "TECHNICIAN",
-      phone: "+61 400 000 005",
-      hourlyRate: 70.0,
-      lat: -33.8650,
-      lng: 151.2150,
-    },
+  const technician2 = await upsertUserMigrating("tech2@voiceops.com", {
+    name: "Amy Chen",
+    email: "tech2@voiceops.com",
+    password: tech2Password,
+    role: "TECHNICIAN",
+    phone: "+61 400 000 005",
+    hourlyRate: 70.0,
+    lat: -33.8650,
+    lng: 151.2150,
   });
   console.log(`  technician2: ${technician2.email}`);
 
   const customerPassword = await hash("Customer@1234", 12);
-  const customer = await prisma.user.upsert({
-    where: { email: "customer@voiceops.com" },
-    update: {},
-    create: {
-      name: "John Smith",
-      email: "customer@voiceops.com",
-      password: customerPassword,
-      role: "CUSTOMER",
-      phone: "+61 400 000 004",
-      address: "12 George St, Sydney NSW 2000",
-    },
+  const customer = await upsertUserMigrating("customer@voiceops.com", {
+    name: "Bishal Pandey",
+    email: "12267110@cqumail.com",
+    password: customerPassword,
+    role: "CUSTOMER",
+    phone: "+61 400 000 004",
+    address: "12 George St, Sydney NSW 2000",
   });
   console.log(`  customer:   ${customer.email}`);
 
@@ -264,7 +271,7 @@ async function main() {
     }
   }
 
-  console.log(`  technician skills: Jake (4 skills), Amy (3 skills)`);
+  console.log(`  technician skills: Mehran (4 skills), Amy (3 skills)`);
 
   const wo1 = await prisma.workOrder.upsert({
     where: { referenceNumber: "VO-00001" },
@@ -362,7 +369,7 @@ async function main() {
       userId: admin.id,
       type: "ASSIGNMENT",
       title: "Technician assigned",
-      body: "Jake Miller has been assigned to VO-00002.",
+      body: "Mehran Abbas has been assigned to VO-00002.",
       link: `/admin/work-orders/${wo2.id}`,
     },
     {
@@ -414,11 +421,11 @@ async function main() {
   }
 
   console.log("\nSeed complete:");
-  console.log(`  admin:      admin@voiceops.com     / Admin@1234`);
-  console.log(`  manager:    manager@voiceops.com   / Manager@1234`);
-  console.log(`  technician: tech@voiceops.com      / Tech@1234`);
-  console.log(`  technician: tech2@voiceops.com     / Tech@1234`);
-  console.log(`  customer:   customer@voiceops.com  / Customer@1234`);
+  console.log(`  admin:      nouman.riaz@cqumail.com   / Admin@1234`);
+  console.log(`  manager:    manager@voiceops.com      / Manager@1234`);
+  console.log(`  technician: mehran.abbas@cqumail.com  / Tech@1234`);
+  console.log(`  technician: tech2@voiceops.com        / Tech@1234`);
+  console.log(`  customer:   12267110@cqumail.com      / Customer@1234`);
 }
 
 main()

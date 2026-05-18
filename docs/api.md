@@ -166,8 +166,8 @@ Return the currently logged-in user's profile.
 ```json
 {
   "id": "cmo6vjckz000284w5rkqlozmj",
-  "name": "Jake Miller",
-  "email": "tech@voiceops.com",
+  "name": "Mehran Abbas",
+  "email": "mehran.abbas@cqumail.com",
   "role": "TECHNICIAN",
   "status": "ACTIVE",
   "phone": "+61 412 345 678",
@@ -192,7 +192,7 @@ ignored — the role/email/password cannot be self-updated here.
 **Request body:** (all fields optional)
 ```json
 {
-  "name": "Jake Miller",
+  "name": "Mehran Abbas",
   "phone": "+61 412 345 678"
 }
 ```
@@ -206,8 +206,8 @@ Field rules:
 ```json
 {
   "id": "cmo6vjckz000284w5rkqlozmj",
-  "name": "Jake Miller",
-  "email": "tech@voiceops.com",
+  "name": "Mehran Abbas",
+  "email": "mehran.abbas@cqumail.com",
   "role": "TECHNICIAN",
   "status": "ACTIVE",
   "phone": "+61 412 345 678",
@@ -442,8 +442,8 @@ only see jobs they raised. Admins and managers see everything.
       "updatedAt": "2026-04-25T11:09:29.021Z",
       "customer": {
         "id": "cmo6vjd2j000384w54on4g184",
-        "name": "John Smith",
-        "email": "customer@voiceops.com"
+        "name": "Bishal Pandey",
+        "email": "12267110@cqumail.com"
       },
       "technician": {
         "id": "cmodvquwn0000s8w5v8blt682",

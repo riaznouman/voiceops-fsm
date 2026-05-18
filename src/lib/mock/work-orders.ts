@@ -61,7 +61,7 @@ export const mockWorkOrders: MockWorkOrder[] = [
     scheduledAt: "2026-04-25 10:00",
     status: "IN_PROGRESS",
     priority: "HIGH",
-    technician: "John Smith",
+    technician: "Mehran Abbas",
   },
   {
     ref: "WO-2026-0040",
@@ -133,7 +133,7 @@ export const mockWorkOrders: MockWorkOrder[] = [
     scheduledAt: "2026-04-24 09:30",
     status: "IN_PROGRESS",
     priority: "NORMAL",
-    technician: "John Smith",
+    technician: "Mehran Abbas",
   },
   {
     ref: "WO-2026-0032",
@@ -187,7 +187,7 @@ export const mockWorkOrders: MockWorkOrder[] = [
     scheduledAt: "2026-04-22 16:15",
     status: "COMPLETED",
     priority: "LOW",
-    technician: "John Smith",
+    technician: "Mehran Abbas",
   },
   {
     ref: "WO-2026-0026",

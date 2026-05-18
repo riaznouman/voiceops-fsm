@@ -93,7 +93,7 @@ function RegisterForm() {
               required
               autoFocus
               autoComplete="name"
-              placeholder="John Smith"
+              placeholder="Bishal Pandey"
               value={name}
               onChange={(e) => setName(e.target.value)}
               aria-invalid={Boolean(errors.name)}

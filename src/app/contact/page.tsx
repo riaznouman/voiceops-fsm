@@ -76,7 +76,7 @@ export default function ContactPage() {
                     type="text"
                     required
                     autoFocus
-                    placeholder="John Smith"
+                    placeholder="Bishal Pandey"
                     value={form.name}
                     onChange={(e) => set("name", e.target.value)}
                     className={inputCls}

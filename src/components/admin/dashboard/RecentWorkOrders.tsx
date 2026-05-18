@@ -13,7 +13,7 @@ const recentOrders = [
     customer: "Lisa Wang",
     service: "On-site Repair",
     status: { label: "In Progress", tone: "in-progress" },
-    technician: "John Smith",
+    technician: "Mehran Abbas",
     scheduled: "10:00 AM",
   },
   {

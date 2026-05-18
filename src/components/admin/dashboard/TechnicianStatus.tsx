@@ -1,7 +1,7 @@
 // TODO: wire to /api/dashboard/technicians in Sprint 2
 const technicians = [
   {
-    name: "John Smith",
+    name: "Mehran Abbas",
     state: "busy",
     job: "WO-1042 — On-site repair, 14 George St",
     badge: { label: "In Progress", tone: "in-progress" },

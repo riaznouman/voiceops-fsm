@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth-guard";
 import { createWithRef } from "@/lib/ref-number";
+import { notify } from "@/lib/notify";
 import type { Prisma, WorkOrderStatus } from "@prisma/client";
 
 const VALID_STATUSES: WorkOrderStatus[] = [
@@ -125,6 +126,14 @@ export async function POST(request: NextRequest) {
           issueDescription,
         },
       })
+  );
+
+  await notify(
+    customerId,
+    "BOOKING_CREATED",
+    "Your booking is confirmed",
+    `Work order ${workOrder.referenceNumber} has been created for you.`,
+    `/customer/work-orders/${workOrder.id}`
   );
 
   return NextResponse.json(workOrder, { status: 201 });

@@ -2,12 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth-guard";
 import { logActivity } from "@/lib/activity-log";
+import { notify } from "@/lib/notify";
 import {
   InvalidTransitionError,
   VALID_STATUSES,
   assertTransition,
 } from "@/lib/work-order-status";
 import type { WorkOrderStatus } from "@prisma/client";
+
+const STATUS_CUSTOMER_MESSAGES: Partial<Record<WorkOrderStatus, string>> = {
+  EN_ROUTE: "Your technician is on the way.",
+  ON_SITE: "Your technician has arrived.",
+  IN_PROGRESS: "Work has started on your job.",
+  COMPLETED: "Your job has been completed.",
+  CANCELLED: "Your job has been cancelled.",
+};
 
 const TECHNICIAN_ALLOWED_TARGETS: WorkOrderStatus[] = [
   "EN_ROUTE",
@@ -150,8 +159,32 @@ export async function PATCH(
 
   if (body.status !== undefined && body.status !== workOrder.status) {
     await logActivity(id, user.userId, "STATUS_CHANGED", workOrder.status, body.status);
+    const customerMsg = STATUS_CUSTOMER_MESSAGES[body.status as WorkOrderStatus];
+    if (customerMsg && workOrder.customerId) {
+      await notify(
+        workOrder.customerId,
+        "STATUS_UPDATE",
+        `Work order ${workOrder.referenceNumber}`,
+        customerMsg,
+        `/customer/work-orders/${id}`
+      );
+    }
   } else if (Object.keys(data).length > 0) {
     await logActivity(id, user.userId, "UPDATED");
+  }
+
+  if (
+    body.technicianId !== undefined &&
+    body.technicianId !== workOrder.technicianId &&
+    body.technicianId
+  ) {
+    await notify(
+      body.technicianId,
+      "ASSIGNMENT",
+      "New job assigned",
+      `Work order ${workOrder.referenceNumber} has been assigned to you.`,
+      `/admin/work-orders/${id}`
+    );
   }
 
   return NextResponse.json(updated);

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth-guard";
+import { notify } from "@/lib/notify";
 import type { InvoiceStatus } from "@prisma/client";
 
 const VALID_STATUSES: InvoiceStatus[] = ["DRAFT", "SENT", "PAID", "CANCELLED"];
@@ -75,6 +76,27 @@ export async function PATCH(
   }
 
   const updated = await prisma.invoice.update({ where: { id }, data });
+
+  if (status !== invoice.status) {
+    if (status === "SENT") {
+      await notify(
+        invoice.customerId,
+        "INVOICE_SENT",
+        "New invoice",
+        `Invoice ${invoice.referenceNumber} has been issued for $${invoice.total.toFixed(2)}.`,
+        `/customer/invoices/${id}`
+      );
+    } else if (status === "PAID") {
+      await notify(
+        invoice.customerId,
+        "INVOICE_PAID",
+        "Payment received",
+        `Thanks — we've recorded payment for invoice ${invoice.referenceNumber}.`,
+        `/customer/invoices/${id}`
+      );
+    }
+  }
+
   return NextResponse.json(updated);
 }
 

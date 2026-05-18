@@ -7,12 +7,32 @@ import {
   Calendar,
   CheckCircle,
   Clock,
-  LoaderCircle,
   Phone,
   UserCheck,
   Users,
 } from "lucide-react";
 import StatCard from "@/components/admin/dashboard/StatCard";
+
+function StatCardSkeleton() {
+  return (
+    <div className="flex items-start gap-3 rounded-md border border-gray-200 bg-white p-4">
+      <div className="h-9 w-9 shrink-0 animate-pulse rounded-md bg-gray-200" />
+      <div className="min-w-0 flex-1">
+        <div className="h-3 w-16 animate-pulse rounded bg-gray-200" />
+        <div className="mt-2 h-6 w-12 animate-pulse rounded bg-gray-200" />
+      </div>
+    </div>
+  );
+}
+
+function MiniStatSkeleton() {
+  return (
+    <div className="rounded-md border border-gray-200 bg-white p-3 text-center">
+      <div className="mx-auto h-5 w-8 animate-pulse rounded bg-gray-200" />
+      <div className="mx-auto mt-2 h-2.5 w-14 animate-pulse rounded bg-gray-200" />
+    </div>
+  );
+}
 
 interface DashboardStats {
   totalWorkOrders: number;
@@ -73,9 +93,45 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <LoaderCircle className="h-7 w-7 animate-spin text-blue-600" />
-      </div>
+      <>
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="mb-1 text-2xl font-bold text-gray-900">Dashboard</h1>
+            <p className="text-sm text-gray-500">Loading your overview…</p>
+          </div>
+        </div>
+        <h2 className="mt-6 mb-3 text-base font-semibold text-gray-900">Work Orders</h2>
+        <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <StatCardSkeleton key={i} />
+          ))}
+        </div>
+        <h2 className="mt-6 mb-3 text-base font-semibold text-gray-900">Status Breakdown</h2>
+        <div className="mb-6 grid grid-cols-3 gap-4 sm:grid-cols-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <MiniStatSkeleton key={i} />
+          ))}
+        </div>
+        <h2 className="mt-6 mb-3 text-base font-semibold text-gray-900">Team</h2>
+        <div className="mb-6 grid grid-cols-2 gap-4">
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+        </div>
+        <section className="rounded-md border border-gray-300 bg-white p-5">
+          <h2 className="mb-3 border-b border-gray-200 pb-2.5 text-[15px] font-semibold text-gray-900">
+            Recent Activity
+          </h2>
+          <ul className="flex flex-col gap-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <li key={i} className="flex items-center gap-3">
+                <div className="h-3.5 w-3.5 shrink-0 animate-pulse rounded-full bg-gray-200" />
+                <div className="h-3 flex-1 animate-pulse rounded bg-gray-200" />
+                <div className="h-3 w-16 animate-pulse rounded bg-gray-200" />
+              </li>
+            ))}
+          </ul>
+        </section>
+      </>
     );
   }
 

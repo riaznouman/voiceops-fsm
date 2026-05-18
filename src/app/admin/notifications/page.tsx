@@ -1,14 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Bell, Check, CheckCheck, LoaderCircle } from "lucide-react";
 
 interface Notification {
   id: string;
   type: string;
-  message: string;
+  title: string;
+  body: string;
+  link: string | null;
   read: boolean;
   createdAt: string;
+}
+
+function formatRelative(iso: string) {
+  const seconds = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (seconds < 60) return "just now";
+  if (seconds < 3600) return `${Math.floor(seconds / 60)} min ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)} h ago`;
+  if (seconds < 86400 * 7) return `${Math.floor(seconds / 86400)} d ago`;
+  return new Date(iso).toLocaleDateString();
 }
 
 export default function NotificationsPage() {
@@ -101,38 +113,56 @@ export default function NotificationsPage() {
         </div>
       ) : (
         <ul className="flex flex-col gap-2">
-          {notifications.map((n) => (
-            <li
-              key={n.id}
-              className={`flex items-start gap-4 rounded-md border px-4 py-3.5 transition-colors ${
-                n.read
-                  ? "border-gray-200 bg-white"
-                  : "border-blue-100 bg-blue-50"
-              }`}
-            >
-              <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${n.read ? "bg-gray-100 text-gray-400" : "bg-blue-100 text-blue-600"}`}>
-                <Bell size={14} />
+          {notifications.map((n) => {
+            const content = (
+              <div className="min-w-0 flex-1">
+                <div className="flex items-baseline justify-between gap-3">
+                  <p className={`text-sm ${n.read ? "text-gray-700" : "font-semibold text-gray-900"}`}>
+                    {n.title}
+                  </p>
+                  <span className="shrink-0 text-[11px] text-gray-400">
+                    {formatRelative(n.createdAt)}
+                  </span>
+                </div>
+                {n.body && (
+                  <p className={`mt-0.5 text-sm ${n.read ? "text-gray-500" : "text-gray-700"}`}>
+                    {n.body}
+                  </p>
+                )}
               </div>
-              <div className="flex-1">
-                <p className={`text-sm ${n.read ? "text-gray-700" : "font-medium text-gray-900"}`}>
-                  {n.message}
-                </p>
-                <p className="mt-0.5 text-[11px] text-gray-400">
-                  {new Date(n.createdAt).toLocaleString()}
-                </p>
-              </div>
-              {!n.read && (
-                <button
-                  type="button"
-                  onClick={() => markRead(n.id)}
-                  className="shrink-0 rounded border border-gray-300 p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50"
-                  title="Mark as read"
-                >
-                  <Check size={13} />
-                </button>
-              )}
-            </li>
-          ))}
+            );
+            return (
+              <li
+                key={n.id}
+                className={`flex items-start gap-4 rounded-md border px-4 py-3.5 transition-colors ${
+                  n.read
+                    ? "border-gray-200 bg-white"
+                    : "border-blue-100 bg-blue-50"
+                }`}
+              >
+                <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${n.read ? "bg-gray-100 text-gray-400" : "bg-blue-100 text-blue-600"}`}>
+                  <Bell size={14} />
+                </div>
+                {n.link ? (
+                  <Link href={n.link} className="min-w-0 flex-1 hover:underline">
+                    {content}
+                  </Link>
+                ) : (
+                  content
+                )}
+                {!n.read && (
+                  <button
+                    type="button"
+                    onClick={() => markRead(n.id)}
+                    className="shrink-0 rounded border border-gray-300 p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50"
+                    title="Mark as read"
+                  >
+                    <Check size={13} />
+                  </button>
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
     </>

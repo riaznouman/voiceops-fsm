@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { LoaderCircle, Plus } from "lucide-react";
+import { ClipboardList, LoaderCircle, Plus } from "lucide-react";
 import JobPriorityBadge from "@/components/admin/work-orders/JobPriorityBadge";
 import JobStatusBadge from "@/components/admin/work-orders/JobStatusBadge";
 import JobTableFilters from "@/components/admin/work-orders/JobTableFilters";
@@ -125,11 +125,26 @@ function WorkOrdersContent() {
               </tr>
             ) : workOrders.length === 0 ? (
               <tr>
-                <td
-                  colSpan={jobColumns.length}
-                  className="px-3 py-12 text-center text-sm text-gray-500"
-                >
-                  No work orders match your filters.
+                <td colSpan={jobColumns.length} className="px-3 py-14">
+                  <div className="flex flex-col items-center gap-3 text-center">
+                    <ClipboardList className="h-10 w-10 text-gray-300" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">No work orders found</p>
+                      <p className="mt-1 text-xs text-gray-500">
+                        {statusParam !== "ALL" || qParam
+                          ? "Try clearing your filters or search."
+                          : "Create a work order to get started."}
+                      </p>
+                    </div>
+                    {statusParam === "ALL" && !qParam && (
+                      <Link
+                        href="/admin/work-orders/new"
+                        className="mt-1 inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
+                      >
+                        <Plus size={14} /> New Work Order
+                      </Link>
+                    )}
+                  </div>
                 </td>
               </tr>
             ) : (

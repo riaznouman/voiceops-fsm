@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { LoaderCircle, Plus } from "lucide-react";
+import { FileText, LoaderCircle, Plus } from "lucide-react";
 import Pagination from "@/components/ui/Pagination";
 
 interface Invoice {
@@ -100,7 +100,27 @@ export default function InvoicesPage() {
               </tr>
             ) : invoices.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-3 py-10 text-center text-sm text-gray-500">No invoices found.</td>
+                <td colSpan={6} className="px-3 py-14">
+                  <div className="flex flex-col items-center gap-3 text-center">
+                    <FileText className="h-10 w-10 text-gray-300" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">No invoices yet</p>
+                      <p className="mt-1 text-xs text-gray-500">
+                        {statusFilter
+                          ? `No invoices match the "${statusFilter}" filter.`
+                          : "Create your first invoice to get started."}
+                      </p>
+                    </div>
+                    {!statusFilter && (
+                      <Link
+                        href="/admin/invoices/new"
+                        className="mt-1 inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
+                      >
+                        <Plus size={14} /> New invoice
+                      </Link>
+                    )}
+                  </div>
+                </td>
               </tr>
             ) : (
               invoices.map((inv) => (

@@ -27,12 +27,13 @@ export function extractToken(request: NextRequest): TokenPayload {
   }
 }
 
-export function requireRole(roles: string[], request: NextRequest): TokenPayload {
-  const payload = extractToken(request);
-  if (!roles.includes(payload.role)) {
+// Works for both mobile (Bearer token) and admin panel (NextAuth session)
+export async function requireRole(roles: string[], request: NextRequest): Promise<CurrentUser> {
+  const user = await getCurrentUser(request);
+  if (!roles.includes(user.role)) {
     throw { status: 403, message: "Insufficient permissions" };
   }
-  return payload;
+  return user;
 }
 
 // Auth via Bearer token (mobile) or NextAuth session (admin panel)

@@ -8,7 +8,7 @@ interface Service {
   id: string;
   name: string;
   category?: { name: string } | null;
-  defaultPrice?: number | null;
+  basePrice?: number | null;
   durationMinutes?: number | null;
   description?: string | null;
 }
@@ -16,7 +16,7 @@ interface Service {
 interface ServiceForm {
   name: string;
   description: string;
-  defaultPrice: string;
+  basePrice: string;
   durationMinutes: string;
 }
 
@@ -33,7 +33,7 @@ export default function ServicesPage() {
   const [error, setError] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Service | null>(null);
-  const [form, setForm] = useState<ServiceForm>({ name: "", description: "", defaultPrice: "", durationMinutes: "" });
+  const [form, setForm] = useState<ServiceForm>({ name: "", description: "", basePrice: "", durationMinutes: "" });
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
 
@@ -50,7 +50,7 @@ export default function ServicesPage() {
 
   function openCreate() {
     setEditTarget(null);
-    setForm({ name: "", description: "", defaultPrice: "", durationMinutes: "" });
+    setForm({ name: "", description: "", basePrice: "", durationMinutes: "" });
     setFormError("");
     setModalOpen(true);
   }
@@ -60,7 +60,7 @@ export default function ServicesPage() {
     setForm({
       name: s.name,
       description: s.description ?? "",
-      defaultPrice: s.defaultPrice != null ? String(s.defaultPrice) : "",
+      basePrice: s.basePrice != null ? String(s.basePrice) : "",
       durationMinutes: s.durationMinutes != null ? String(s.durationMinutes) : "",
     });
     setFormError("");
@@ -76,7 +76,7 @@ export default function ServicesPage() {
       const body = {
         name: form.name,
         description: form.description || undefined,
-        defaultPrice: form.defaultPrice ? parseFloat(form.defaultPrice) : undefined,
+        basePrice: form.basePrice ? parseFloat(form.basePrice) : undefined,
         durationMinutes: form.durationMinutes ? parseInt(form.durationMinutes) : undefined,
       };
       const r = editTarget
@@ -157,7 +157,7 @@ export default function ServicesPage() {
                 <tr key={s.id} className="hover:bg-gray-50">
                   <td className={`${bodyCellClass} font-medium text-gray-900`}>{s.name}</td>
                   <td className={bodyCellClass}>{s.category?.name ?? "—"}</td>
-                  <td className={bodyCellClass}>{s.defaultPrice != null ? `$${s.defaultPrice}` : "—"}</td>
+                  <td className={bodyCellClass}>{s.basePrice != null ? `$${s.basePrice}` : "—"}</td>
                   <td className={bodyCellClass}>{s.durationMinutes != null ? `${s.durationMinutes} min` : "—"}</td>
                   <td className={`${bodyCellClass} text-right`}>
                     <div className="flex justify-end gap-1.5">
@@ -219,8 +219,8 @@ export default function ServicesPage() {
                 type="number"
                 step="0.01"
                 min="0"
-                value={form.defaultPrice}
-                onChange={(e) => setForm((f) => ({ ...f, defaultPrice: e.target.value }))}
+                value={form.basePrice}
+                onChange={(e) => setForm((f) => ({ ...f, basePrice: e.target.value }))}
                 className={inputCls}
               />
             </div>

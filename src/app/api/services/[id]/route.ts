@@ -16,7 +16,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    requireRole(["ADMIN", "MANAGER"], request);
+    await requireRole(["ADMIN", "MANAGER"], request);
   } catch (err: unknown) {
     const e = err as { status: number; message: string };
     return NextResponse.json({ error: e.message }, { status: e.status });
@@ -60,7 +60,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    requireRole(["ADMIN", "MANAGER"], request);
+    await requireRole(["ADMIN", "MANAGER"], request);
   } catch (err: unknown) {
     const e = err as { status: number; message: string };
     return NextResponse.json({ error: e.message }, { status: e.status });

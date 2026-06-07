@@ -7,10 +7,15 @@ import Modal from "@/components/ui/Modal";
 interface Service {
   id: string;
   name: string;
-  category?: { name: string } | null;
+  category?: { id: string; name: string } | null;
   basePrice?: number | null;
   durationMinutes?: number | null;
   description?: string | null;
+}
+
+interface Category {
+  id: string;
+  name: string;
 }
 
 interface ServiceForm {
@@ -18,6 +23,7 @@ interface ServiceForm {
   description: string;
   basePrice: string;
   durationMinutes: string;
+  categoryId: string;
 }
 
 const headCellClass =
@@ -29,11 +35,12 @@ const inputCls =
 
 export default function ServicesPage() {
   const [services, setServices] = useState<Service[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Service | null>(null);
-  const [form, setForm] = useState<ServiceForm>({ name: "", description: "", basePrice: "", durationMinutes: "" });
+  const [form, setForm] = useState<ServiceForm>({ name: "", description: "", basePrice: "", durationMinutes: "", categoryId: "" });
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
 
@@ -46,11 +53,17 @@ export default function ServicesPage() {
       .finally(() => setLoading(false));
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+    fetch("/api/categories")
+      .then((r) => r.json())
+      .then((d) => setCategories(d.data ?? d ?? []))
+      .catch(() => {});
+  }, []);
 
   function openCreate() {
     setEditTarget(null);
-    setForm({ name: "", description: "", basePrice: "", durationMinutes: "" });
+    setForm({ name: "", description: "", basePrice: "", durationMinutes: "", categoryId: "" });
     setFormError("");
     setModalOpen(true);
   }
@@ -62,6 +75,7 @@ export default function ServicesPage() {
       description: s.description ?? "",
       basePrice: s.basePrice != null ? String(s.basePrice) : "",
       durationMinutes: s.durationMinutes != null ? String(s.durationMinutes) : "",
+      categoryId: s.category?.id ?? "",
     });
     setFormError("");
     setModalOpen(true);
@@ -78,6 +92,7 @@ export default function ServicesPage() {
         description: form.description || undefined,
         basePrice: form.basePrice ? parseFloat(form.basePrice) : undefined,
         durationMinutes: form.durationMinutes ? parseInt(form.durationMinutes) : undefined,
+        categoryId: form.categoryId || null,
       };
       const r = editTarget
         ? await fetch(`/api/services/${editTarget.id}`, {
@@ -211,6 +226,19 @@ export default function ServicesPage() {
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
               className={inputCls}
             />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Category</label>
+            <select
+              value={form.categoryId}
+              onChange={(e) => setForm((f) => ({ ...f, categoryId: e.target.value }))}
+              className={inputCls}
+            >
+              <option value="">No category</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>

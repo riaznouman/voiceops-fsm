@@ -4,8 +4,8 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, LoaderCircle, Plus, Trash2 } from "lucide-react";
+import CustomerPicker from "@/components/admin/CustomerPicker";
 
-interface User { id: string; name: string; email: string; }
 interface WorkOrder { id: string; referenceNumber: string; }
 
 interface LineItem { description: string; quantity: string; unitPrice: string; }
@@ -15,7 +15,6 @@ const inputCls =
 
 export default function NewInvoicePage() {
   const router = useRouter();
-  const [customers, setCustomers] = useState<User[]>([]);
   const [workOrders, setWorkOrders] = useState<WorkOrder[]>([]);
   const [processing, setProcessing] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -29,13 +28,6 @@ export default function NewInvoicePage() {
   const [lineItems, setLineItems] = useState<LineItem[]>([
     { description: "", quantity: "1", unitPrice: "" },
   ]);
-
-  useEffect(() => {
-    fetch("/api/users?role=CUSTOMER&pageSize=200")
-      .then((r) => (r.ok ? r.json() : { data: [] }))
-      .then((d) => setCustomers(d.data ?? []))
-      .catch(() => {});
-  }, []);
 
   useEffect(() => {
     if (!form.customerId) { setWorkOrders([]); return; }
@@ -130,17 +122,11 @@ export default function NewInvoicePage() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">Customer *</label>
-            <select
+            <CustomerPicker
               value={form.customerId}
-              onChange={(e) => setField("customerId", e.target.value)}
-              className={inputCls + " w-full"}
-            >
-              <option value="">Select customer…</option>
-              {customers.map((c) => (
-                <option key={c.id} value={c.id}>{c.name} ({c.email})</option>
-              ))}
-            </select>
-            {errors.customerId && <p className="mt-1 text-xs text-red-600">{errors.customerId}</p>}
+              onChange={(id) => setForm((prev) => ({ ...prev, customerId: id, workOrderId: "" }))}
+              error={errors.customerId}
+            />
           </div>
 
           {workOrders.length > 0 && (

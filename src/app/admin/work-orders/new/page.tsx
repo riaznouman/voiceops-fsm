@@ -4,13 +4,12 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, LoaderCircle } from "lucide-react";
+import CustomerPicker from "@/components/admin/CustomerPicker";
 
-interface User { id: string; name: string; email: string; }
 interface Service { id: string; name: string; }
 
 export default function NewWorkOrderPage() {
   const router = useRouter();
-  const [customers, setCustomers] = useState<User[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [processing, setProcessing] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -25,10 +24,6 @@ export default function NewWorkOrderPage() {
   });
 
   useEffect(() => {
-    fetch("/api/users?role=CUSTOMER&pageSize=200")
-      .then((r) => (r.ok ? r.json() : { data: [] }))
-      .then((d) => setCustomers(d.data ?? []))
-      .catch(() => {});
     fetch("/api/services?pageSize=200")
       .then((r) => (r.ok ? r.json() : { data: [] }))
       .then((d) => setServices(d.data ?? d ?? []))
@@ -100,19 +95,11 @@ export default function NewWorkOrderPage() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div>
             <label className={labelCls}>Customer *</label>
-            <select
+            <CustomerPicker
               value={form.customerId}
-              onChange={(e) => set("customerId", e.target.value)}
-              className={inputCls + " w-full"}
-            >
-              <option value="">Select a customer…</option>
-              {customers.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name} ({c.email})
-                </option>
-              ))}
-            </select>
-            {errors.customerId && <p className="mt-1 text-xs text-red-600">{errors.customerId}</p>}
+              onChange={(id) => set("customerId", id)}
+              error={errors.customerId}
+            />
           </div>
 
           <div>

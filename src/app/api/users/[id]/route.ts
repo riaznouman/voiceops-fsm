@@ -36,6 +36,9 @@ export async function GET(
       status: true,
       emailVerifiedAt: true,
       createdAt: true,
+      technicianSkills: {
+        select: { skill: { select: { id: true, name: true } } },
+      },
     },
   });
 
@@ -43,7 +46,11 @@ export async function GET(
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  return NextResponse.json(user);
+  const { technicianSkills, ...rest } = user;
+  return NextResponse.json({
+    ...rest,
+    skills: technicianSkills.map((ts) => ts.skill),
+  });
 }
 
 export async function PATCH(

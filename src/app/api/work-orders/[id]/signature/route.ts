@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth-guard";
 import { logActivity } from "@/lib/activity-log";
@@ -43,21 +41,18 @@ export async function POST(
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
 
-  const timestamp = Date.now();
-  const safeName = (file.name || "signature.png").replace(/[^a-zA-Z0-9._-]/g, "_");
-  const filename = `signature_${timestamp}_${safeName}`;
-
-  const uploadDir = path.join(process.cwd(), "public", "uploads", "work-orders", id);
-  await mkdir(uploadDir, { recursive: true });
-  await writeFile(path.join(uploadDir, filename), buffer);
-
-  const url = `/uploads/work-orders/${id}/${filename}`;
+  // Store the signature as a base64 data URL on the row. This works on a
+  // read-only serverless filesystem (e.g. Vercel) where writing into
+  // public/uploads is not possible.
+  const mimeType = file.type || "image/png";
+  const dataUrl = `data:${mimeType};base64,${buffer.toString("base64")}`;
+  const filename = file.name || "signature.png";
   const signedAt = new Date();
 
   const updated = await prisma.workOrder.update({
     where: { id },
     data: {
-      customerSignaturePath: url,
+      customerSignaturePath: dataUrl,
       customerSignatureAt: signedAt,
     },
     select: {

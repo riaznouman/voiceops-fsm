@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth-guard";
 import { logActivity } from "@/lib/activity-log";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
 
 export async function GET(
   request: NextRequest,
@@ -58,15 +56,13 @@ export async function POST(
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
 
+  // Store the photo as a base64 data URL on the row, so uploads work on a
+  // read-only serverless filesystem (e.g. Vercel) instead of public/uploads.
   const timestamp = Date.now();
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
   const filename = `${timestamp}_${safeName}`;
-
-  const uploadDir = path.join(process.cwd(), "public", "uploads", "work-orders", id);
-  await mkdir(uploadDir, { recursive: true });
-  await writeFile(path.join(uploadDir, filename), buffer);
-
-  const url = `/uploads/work-orders/${id}/${filename}`;
+  const mimeType = file.type || "image/jpeg";
+  const url = `data:${mimeType};base64,${buffer.toString("base64")}`;
 
   const photo = await prisma.workOrderPhoto.create({
     data: {

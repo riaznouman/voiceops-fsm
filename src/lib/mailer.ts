@@ -38,6 +38,83 @@ export async function sendVerificationCodeEmail(to: string, code: string) {
   });
 }
 
+interface InvoiceEmailData {
+  customerName: string;
+  referenceNumber: string;
+  lineItems: { description: string; quantity: number; unitPrice: number; lineTotal: number }[];
+  subtotal: number;
+  taxAmount: number;
+  total: number;
+  dueDate?: Date | null;
+  notes?: string | null;
+}
+
+export async function sendInvoiceEmail(to: string, invoice: InvoiceEmailData) {
+  const transport = getTransport();
+  const money = (n: number) => `$${n.toFixed(2)}`;
+
+  const rows = invoice.lineItems
+    .map(
+      (item) => `
+        <tr>
+          <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${item.description}</td>
+          <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; text-align: center;">${item.quantity}</td>
+          <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb; color: #4b5563; text-align: right;">${money(item.unitPrice)}</td>
+          <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb; color: #111827; text-align: right;">${money(item.lineTotal)}</td>
+        </tr>`
+    )
+    .join("");
+
+  const textLines = invoice.lineItems
+    .map((item) => `  ${item.description} x${item.quantity} @ ${money(item.unitPrice)} = ${money(item.lineTotal)}`)
+    .join("\n");
+
+  const dueLine = invoice.dueDate
+    ? `Due date: ${new Date(invoice.dueDate).toLocaleDateString()}`
+    : "";
+
+  await transport.sendMail({
+    from: `"VoiceOps" <${GMAIL_ADDRESS}>`,
+    to,
+    subject: `Invoice ${invoice.referenceNumber} from VoiceOps`,
+    text:
+      `Hi ${invoice.customerName},\n\n` +
+      `Please find your invoice ${invoice.referenceNumber} below.\n\n` +
+      `${textLines}\n\n` +
+      `Subtotal: ${money(invoice.subtotal)}\n` +
+      `GST (10%): ${money(invoice.taxAmount)}\n` +
+      `Total: ${money(invoice.total)}\n` +
+      (dueLine ? `${dueLine}\n` : "") +
+      (invoice.notes ? `\nNotes: ${invoice.notes}\n` : "") +
+      `\nThank you for your business.\nVoiceOps`,
+    html: `
+      <div style="font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 560px; margin: 0 auto; padding: 24px;">
+        <h2 style="color: #111827; margin: 0 0 4px;">Invoice ${invoice.referenceNumber}</h2>
+        <p style="color: #6b7280; margin: 0 0 20px; font-size: 13px;">${dueLine}</p>
+        <p style="color: #4b5563; margin: 0 0 16px;">Hi ${invoice.customerName}, please find your invoice below.</p>
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+          <thead>
+            <tr>
+              <th style="padding: 8px 12px; border-bottom: 2px solid #d1d5db; text-align: left; color: #6b7280;">Description</th>
+              <th style="padding: 8px 12px; border-bottom: 2px solid #d1d5db; text-align: center; color: #6b7280;">Qty</th>
+              <th style="padding: 8px 12px; border-bottom: 2px solid #d1d5db; text-align: right; color: #6b7280;">Unit</th>
+              <th style="padding: 8px 12px; border-bottom: 2px solid #d1d5db; text-align: right; color: #6b7280;">Amount</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <div style="margin-top: 16px; text-align: right; color: #4b5563; font-size: 14px;">
+          <div style="padding: 2px 0;">Subtotal: ${money(invoice.subtotal)}</div>
+          <div style="padding: 2px 0;">GST (10%): ${money(invoice.taxAmount)}</div>
+          <div style="padding: 8px 0 0; font-size: 18px; font-weight: 700; color: #111827;">Total: ${money(invoice.total)}</div>
+        </div>
+        ${invoice.notes ? `<p style="color: #6b7280; margin: 20px 0 0; font-size: 13px;">Notes: ${invoice.notes}</p>` : ""}
+        <p style="color: #6b7280; margin: 24px 0 0; font-size: 13px;">Thank you for your business.<br/>VoiceOps</p>
+      </div>
+    `,
+  });
+}
+
 export async function sendPasswordResetCodeEmail(to: string, code: string) {
   const transport = getTransport();
   await transport.sendMail({

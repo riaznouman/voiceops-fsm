@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth-guard";
 import { notify } from "@/lib/notify";
+import { sendInvoiceEmail } from "@/lib/mailer";
 import type { InvoiceStatus } from "@prisma/client";
 
 const VALID_STATUSES: InvoiceStatus[] = ["DRAFT", "SENT", "PAID", "CANCELLED"];
@@ -58,7 +59,13 @@ export async function PATCH(
   }
 
   const { id } = await params;
-  const invoice = await prisma.invoice.findUnique({ where: { id } });
+  const invoice = await prisma.invoice.findUnique({
+    where: { id },
+    include: {
+      customer: { select: { name: true, email: true } },
+      lineItems: true,
+    },
+  });
   if (!invoice) {
     return NextResponse.json({ error: "We couldn't find that invoice." }, { status: 404 });
   }
@@ -86,6 +93,27 @@ export async function PATCH(
         `Invoice ${invoice.referenceNumber} has been issued for $${invoice.total.toFixed(2)}.`,
         `/customer/invoices/${id}`
       );
+
+      // Email the invoice to the customer. Skip the placeholder addresses we
+      // generate for voice-booked customers, and never let an email failure
+      // block the status update.
+      const email = invoice.customer?.email;
+      if (email && !email.endsWith("@voiceops.local")) {
+        try {
+          await sendInvoiceEmail(email, {
+            customerName: invoice.customer?.name ?? "there",
+            referenceNumber: invoice.referenceNumber,
+            lineItems: invoice.lineItems,
+            subtotal: invoice.subtotal,
+            taxAmount: invoice.taxAmount,
+            total: invoice.total,
+            dueDate: invoice.dueDate,
+            notes: invoice.notes,
+          });
+        } catch (err) {
+          console.error(`[invoice email] failed to send invoice ${invoice.referenceNumber}`, err);
+        }
+      }
     } else if (status === "PAID") {
       await notify(
         invoice.customerId,

@@ -15,6 +15,12 @@ const STATUS_COLORS: Record<string, string> = {
   CANCELLED: "bg-gray-200 text-gray-700",
 };
 
+const INVOICE_STATUS_COLORS: Record<string, string> = {
+  SENT: "bg-blue-100 text-blue-800",
+  PAID: "bg-green-100 text-green-800",
+  CANCELLED: "bg-gray-200 text-gray-700",
+};
+
 export default async function CustomerDashboardPage() {
   const session = await auth();
   if (!session?.user?.id) {
@@ -23,7 +29,7 @@ export default async function CustomerDashboardPage() {
 
   const userId = session.user.id;
 
-  const [user, workOrders, unreadCount] = await Promise.all([
+  const [user, workOrders, invoices, unreadCount] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: { name: true, phone: true },
@@ -41,6 +47,19 @@ export default async function CustomerDashboardPage() {
         address: true,
         createdAt: true,
         service: { select: { name: true } },
+      },
+    }),
+    prisma.invoice.findMany({
+      where: { customerId: userId, status: { not: "DRAFT" } },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: {
+        id: true,
+        referenceNumber: true,
+        status: true,
+        total: true,
+        dueDate: true,
+        createdAt: true,
       },
     }),
     prisma.notification.count({ where: { userId, read: false } }),
@@ -111,6 +130,54 @@ export default async function CustomerDashboardPage() {
                 >
                   {wo.status.replace("_", " ")}
                 </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="rounded-lg border border-gray-200 bg-white p-6">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-base font-semibold text-gray-900">Recent invoices</h2>
+          {invoices.length > 0 && (
+            <Link href="/customer/invoices" className="text-xs font-medium text-blue-600 hover:text-blue-700">
+              View all
+            </Link>
+          )}
+        </div>
+
+        {invoices.length === 0 ? (
+          <div className="rounded-md border border-dashed border-gray-300 px-6 py-10 text-center">
+            <p className="text-sm text-gray-600">You don&apos;t have any invoices yet.</p>
+            <p className="mt-1 text-xs text-gray-500">
+              Invoices appear here once we issue them for a completed job.
+            </p>
+          </div>
+        ) : (
+          <ul className="divide-y divide-gray-100">
+            {invoices.map((inv) => (
+              <li key={inv.id} className="flex items-center justify-between py-3">
+                <div>
+                  <span className="text-sm font-medium text-gray-900">{inv.referenceNumber}</span>
+                  <div className="mt-0.5 text-xs text-gray-500">
+                    Issued {new Date(inv.createdAt).toLocaleDateString()}
+                    {inv.dueDate && (
+                      <> · due {new Date(inv.dueDate).toLocaleDateString()}</>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-semibold text-gray-900">
+                    ${inv.total.toFixed(2)}
+                  </span>
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                      INVOICE_STATUS_COLORS[inv.status] ?? "bg-gray-100 text-gray-700"
+                    }`}
+                  >
+                    {inv.status}
+                  </span>
+                </div>
               </li>
             ))}
           </ul>

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 const items = [
   { label: "Dashboard", href: "/customer/dashboard" },
+  { label: "Invoices", href: "/customer/invoices" },
   { label: "Notifications", href: "/customer/notifications" },
   { label: "Settings", href: "/customer/settings/profile" },
 ];
@@ -17,7 +18,8 @@ export default function CustomerNav() {
       {items.map((it) => {
         const isActive =
           pathname === it.href ||
-          (it.href.endsWith("/profile") && pathname.startsWith("/customer/settings"));
+          (it.href.endsWith("/profile") && pathname.startsWith("/customer/settings")) ||
+          (it.href.endsWith("/invoices") && pathname.startsWith("/customer/invoices"));
         return (
           <Link
             key={it.href}
